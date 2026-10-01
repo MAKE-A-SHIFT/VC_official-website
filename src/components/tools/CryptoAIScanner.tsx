@@ -17,64 +17,32 @@ interface CryptoProject {
 
 export function CryptoAIScanner() {
   const [isScanning, setIsScanning] = useState(true);
+  const [projects, setProjects] = useState<CryptoProject[]>([]);
   const [expandedId, setExpandedId] = useState<string | null>(null);
-
-  // Données de démonstration hyper réalistes basées sur DefiLlama et analyse fondamentale
-  const projects: CryptoProject[] = [
-    {
-      id: "1",
-      name: "MakerDAO",
-      ticker: "MKR",
-      category: "Stablecoin / RWA",
-      revenue30d: "$18.4M",
-      aiRiskScore: "A",
-      aiValuation: "Sous-évalué",
-      competitors: ["Frax", "Liquity"],
-      aiAnalysis: "L'IA a détecté une rotation massive vers les actifs du monde réel (RWA). Maker génère des revenus constants grâce aux bons du Trésor américain. Face à ses concurrents, sa liquidité est inégalée. Risque systémique faible, forte probabilité d'appréciation long terme.",
-      status: "Completed"
-    },
-    {
-      id: "2",
-      name: "Aave",
-      ticker: "AAVE",
-      category: "Lending",
-      revenue30d: "$12.1M",
-      aiRiskScore: "A+",
-      aiValuation: "Juste prix",
-      competitors: ["Compound", "Radiant"],
-      aiAnalysis: "Aave V3 continue de dominer le marché du prêt. Le modèle de revenu est extrêmement solide avec une capture de valeur optimisée via le GHO (stablecoin). L'analyse prédictive indique que Compound perd des parts de marché face à Aave.",
-      status: "Completed"
-    },
-    {
-      id: "3",
-      name: "GMX",
-      ticker: "GMX",
-      category: "Perp DEX",
-      revenue30d: "$8.5M",
-      aiRiskScore: "B",
-      aiValuation: "Sous-évalué",
-      competitors: ["dYdX", "Hyperliquid"],
-      aiAnalysis: "GMX génère de vrais frais (Real Yield) distribués aux stakers. Cependant, l'IA soulève une alerte sur la concurrence féroce d'Hyperliquid. Le ratio Prix/Revenus (P/S) le rend sous-évalué historiquement, mais le risque d'exécution est modéré (Score B).",
-      status: "Completed"
-    },
-    {
-      id: "4",
-      name: "Lido",
-      ticker: "LDO",
-      category: "Liquid Staking",
-      revenue30d: "$45.2M",
-      aiRiskScore: "C",
-      aiValuation: "Surévalué",
-      competitors: ["Rocket Pool", "Frax Ether"],
-      aiAnalysis: "Bien que les revenus générés par les validateurs Ethereum soient massifs, la tokenomics du jeton LDO ne capture pas efficacement cette valeur pour les détenteurs. Risque réglementaire accru sur la centralisation du staking.",
-      status: "Completed"
-    }
-  ];
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Effet de scan
-    const timer = setTimeout(() => setIsScanning(false), 3000);
-    return () => clearTimeout(timer);
+    async function fetchScannerData() {
+      try {
+        setIsScanning(true);
+        const res = await fetch('/api/scanner');
+        const data = await res.json();
+        
+        if (data.error) {
+          setError(data.error);
+          setIsScanning(false);
+          return;
+        }
+
+        setProjects(data.projects);
+      } catch (err) {
+        setError("Impossible de contacter le serveur d'IA");
+      } finally {
+        setIsScanning(false);
+      }
+    }
+
+    fetchScannerData();
   }, []);
 
   const getRiskColor = (score: string) => {
@@ -89,6 +57,19 @@ export function CryptoAIScanner() {
     if (val === "Surévalué") return "text-red-400";
     return "text-zinc-400";
   };
+
+  if (error) {
+    return (
+      <div className="glass-panel p-6 rounded-2xl w-full border border-red-500/30 bg-red-500/5 text-center xl:col-span-12">
+        <AlertTriangle className="w-8 h-8 text-red-500 mx-auto mb-4" />
+        <h3 className="text-lg font-bold text-white mb-2">Scanner Hors Ligne</h3>
+        <p className="text-zinc-400 text-sm mb-4">{error}</p>
+        <p className="text-xs text-zinc-500">
+          Ajoute une clé <code className="bg-black px-1 py-0.5 rounded">GEMINI_API_KEY</code> dans ton fichier <code className="bg-black px-1 py-0.5 rounded">.env.local</code>.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="glass-panel p-6 rounded-2xl w-full border border-white/5 relative overflow-hidden xl:col-span-12">
