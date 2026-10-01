@@ -8,7 +8,8 @@ import { PropFirmManager } from "../tools/PropFirmManager";
 import { RecoveryCalculator } from "../tools/RecoveryCalculator";
 import { MarketSessions } from "../tools/MarketSessions";
 import { MarketHeatmap } from "../tools/MarketHeatmap";
-import { Activity, ShieldAlert, Target, BookOpen } from "lucide-react";
+import { CryptoAIScanner } from "../tools/CryptoAIScanner";
+import { Activity, ShieldAlert, Target, BookOpen, BrainCircuit } from "lucide-react";
 
 import { useAppStore } from "@/store/useAppStore";
 import { translations } from "@/i18n";
@@ -60,6 +61,16 @@ export function TerminalView() {
             <RiskOfRuin />
             <EdgeCalculator />
             <BacktestJournal />
+          </div>
+        </section>
+
+        {/* SECTION: WEB3 & CRYPTO INTELLIGENCE */}
+        <section>
+          <h2 className="text-white/30 font-bold tracking-widest text-xs mb-6 uppercase flex items-center gap-2">
+             <BrainCircuit className="w-4 h-4"/> Web3 & Crypto Intelligence
+          </h2>
+          <div className="grid grid-cols-1 gap-6">
+            <CryptoAIScanner />
           </div>
         </section>
 
