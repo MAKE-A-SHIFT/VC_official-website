@@ -24,7 +24,9 @@ const mockEntries: JournalEntry[] = [
 
 export function TradingJournal() {
   const { language } = useAppStore();
-  const t = translations[language].terminal;
+  const t = translations[language].terminal as any;
+
+  // Reste du code...
 
   const [entries, setEntries] = useState<JournalEntry[]>(mockEntries);
   const [asset, setAsset] = useState("DAX");
