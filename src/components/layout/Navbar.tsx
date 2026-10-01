@@ -2,11 +2,13 @@
 
 import { useEffect, useRef } from "react";
 import { useAppStore, Language } from "@/store/useAppStore";
+import { translations } from "@/i18n";
 import { Terminal, LayoutDashboard } from "lucide-react";
 import { motion } from "framer-motion";
 
 export function Navbar() {
   const { isTerminalMode, toggleTerminalMode, language, setLanguage } = useAppStore();
+  const t = translations[language];
   const isFirstLoad = useRef(true);
 
   // Auto-détection de la langue du navigateur
@@ -71,7 +73,7 @@ export function Navbar() {
               )}
             </motion.div>
             <span className="text-sm font-medium tracking-wide hidden sm:block">
-              {isTerminalMode ? "TERMINAL" : "SHOWCASE"}
+              {isTerminalMode ? t.navTerminal : t.navShowcase}
             </span>
           </button>
         </div>

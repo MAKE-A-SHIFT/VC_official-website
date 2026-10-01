@@ -34,51 +34,51 @@ export function ShowcaseView() {
           
           <div className="bg-[#0a0a0a] border border-white/5 rounded-xl overflow-hidden flex flex-col">
             <div className="h-40 bg-zinc-900 w-full relative">
-              <img src="/images/live-trading.jpg" alt="Live Trading" className="w-full h-full object-cover opacity-50 grayscale" />
+              <img src="/images/live-trading.jpg" alt={t.card1Title1} className="w-full h-full object-cover opacity-50 grayscale" />
             </div>
             <div className="p-6 text-center flex-1">
-              <h3 className="text-lg font-bold mb-4 text-white">Live Trading <span className="text-green-500">Tous Les Jours</span></h3>
-              <p className="text-xs text-zinc-400 leading-relaxed">Sur la session européenne, américaine et asiatique, retrouve des sessions en live pour voir en direct comment trade des professionnels.</p>
+              <h3 className="text-lg font-bold mb-4 text-white">{t.card1Title1} <span className="text-green-500">{t.card1Title2}</span></h3>
+              <p className="text-xs text-zinc-400 leading-relaxed">{t.card1Desc}</p>
             </div>
           </div>
 
           <div className="bg-[#0a0a0a] border border-white/5 rounded-xl overflow-hidden flex flex-col">
             <div className="h-40 bg-zinc-900 w-full relative">
-              <img src="/images/communaute.jpg" alt="Communauté" className="w-full h-full object-cover opacity-50 grayscale" />
+              <img src="/images/communaute.jpg" alt={t.card2Title1} className="w-full h-full object-cover opacity-50 grayscale" />
             </div>
             <div className="p-6 text-center flex-1">
-              <h3 className="text-lg font-bold mb-4 text-white">Communauté Privée <span className="text-violet-500">+</span> Coaching 1-to-1 avec Luck</h3>
-              <p className="text-xs text-zinc-400 leading-relaxed">Chaque dimanche : un live pour poser tes questions, apprendre, revoir les erreurs, comprendre les setups clés.</p>
+              <h3 className="text-lg font-bold mb-4 text-white">{t.card2Title1} <span className="text-violet-500">{t.card2Title2}</span> {t.card2Title3}</h3>
+              <p className="text-xs text-zinc-400 leading-relaxed">{t.card2Desc}</p>
             </div>
           </div>
 
           <div className="bg-[#0a0a0a] border border-white/5 rounded-xl overflow-hidden flex flex-col">
             <div className="h-40 bg-zinc-900 w-full relative">
-              <img src="/images/modules.jpg" alt="Modules" className="w-full h-full object-cover opacity-50 grayscale" />
+              <img src="/images/modules.jpg" alt={t.card3Title1} className="w-full h-full object-cover opacity-50 grayscale" />
             </div>
             <div className="p-6 text-center flex-1">
-              <h3 className="text-lg font-bold mb-4 text-white">Formation Aux Bases Du Trading <span className="text-green-500">Gratuite</span></h3>
-              <p className="text-xs text-zinc-400 leading-relaxed">Accessible 100% gratuitement directement depuis le groupe Telegram de l'Académie pour maîtriser les fondations.</p>
+              <h3 className="text-lg font-bold mb-4 text-white">{t.card3Title1} <span className="text-green-500">{t.card3Title2}</span></h3>
+              <p className="text-xs text-zinc-400 leading-relaxed">{t.card3Desc}</p>
             </div>
           </div>
 
           <div className="bg-[#0a0a0a] border border-white/5 rounded-xl overflow-hidden flex flex-col">
             <div className="h-40 bg-zinc-900 w-full relative">
-              <img src="/images/trades.jpg" alt="Trades" className="w-full h-full object-cover opacity-50 grayscale" />
+              <img src="/images/trades.jpg" alt={t.card4Title2} className="w-full h-full object-cover opacity-50 grayscale" />
             </div>
             <div className="p-6 text-center flex-1">
-              <h3 className="text-lg font-bold mb-4 text-white">Accès Aux <span className="text-violet-500">Meilleurs Trades</span></h3>
-              <p className="text-xs text-zinc-400 leading-relaxed">Des setups Gold, BTC et Forex clairs, expliqués, basés sur ma propre stratégie, avec 95% de taux de réussite documenté.</p>
+              <h3 className="text-lg font-bold mb-4 text-white">{t.card4Title1} <span className="text-violet-500">{t.card4Title2}</span></h3>
+              <p className="text-xs text-zinc-400 leading-relaxed">{t.card4Desc}</p>
             </div>
           </div>
 
           <div className="bg-[#0a0a0a] border border-white/5 rounded-xl overflow-hidden flex flex-col">
             <div className="h-40 bg-zinc-900 w-full relative">
-              <img src="/images/capital.jpg" alt="Capital" className="w-full h-full object-cover opacity-50 grayscale" />
+              <img src="/images/capital.jpg" alt={t.card5Title2} className="w-full h-full object-cover opacity-50 grayscale" />
             </div>
             <div className="p-6 text-center flex-1">
-              <h3 className="text-lg font-bold mb-4 text-white">Accès À Du <span className="text-green-500">Capital</span> Pour Trader</h3>
-              <p className="text-xs text-zinc-400 leading-relaxed">Nos membres accèdent à des opportunités de traders grâce à des comptes financés allant jusqu'à 1M$.</p>
+              <h3 className="text-lg font-bold mb-4 text-white">{t.card5Title1} <span className="text-green-500">{t.card5Title2}</span> {t.card5Title3}</h3>
+              <p className="text-xs text-zinc-400 leading-relaxed">{t.card5Desc}</p>
             </div>
           </div>
 
@@ -109,18 +109,18 @@ export function ShowcaseView() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
           <div className="md:pr-8">
             <div className="flex items-center gap-4 mb-4">
-              <h3 className="text-xl font-bold">Rejoignez Le Groupe Gratuit</h3>
-              <span className="text-violet-500 text-xs font-bold tracking-widest">APPLY</span>
+              <h3 className="text-xl font-bold">{t.step1Title}</h3>
+              <span className="text-violet-500 text-xs font-bold tracking-widest">{t.step1Badge}</span>
             </div>
-            <p className="text-zinc-500 text-sm leading-relaxed">Rejoignez notre groupe gratuit, où nous partageons nos idées de trading.</p>
+            <p className="text-zinc-500 text-sm leading-relaxed">{t.step1Desc}</p>
           </div>
           <div className="border border-green-500/50 rounded-lg p-6 bg-[#050f05] shadow-[0_0_30px_rgba(34,197,94,0.05)] relative md:-mt-6">
-            <h3 className="text-xl font-bold mb-4 text-white">Tradez Avec Nous</h3>
-            <p className="text-zinc-400 text-sm leading-relaxed">Gagnez de l'argent avec nous grâce à nos idées de trading, chaque jour et entièrement gratuitement.</p>
+            <h3 className="text-xl font-bold mb-4 text-white">{t.step2Title}</h3>
+            <p className="text-zinc-400 text-sm leading-relaxed">{t.step2Desc}</p>
           </div>
           <div className="md:pl-8">
-            <h3 className="text-xl font-bold mb-4">Développez-Vous En Tant Que Trader</h3>
-            <p className="text-zinc-500 text-sm leading-relaxed">Augmentez votre potentiel financier, créez une véritable liberté dans votre vie et profitez de notre communauté pour continuer à grandir.</p>
+            <h3 className="text-xl font-bold mb-4">{t.step3Title}</h3>
+            <p className="text-zinc-500 text-sm leading-relaxed">{t.step3Desc}</p>
           </div>
         </div>
       </section>
@@ -130,10 +130,10 @@ export function ShowcaseView() {
         <h2 className="text-3xl font-bold mb-16">{t.toolsTitle1} <span className="text-transparent bg-clip-text bg-gradient-to-r from-zinc-500 to-zinc-700">{t.toolsTitle2}</span></h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
-            { title: 'Calculateur de Position', img: '/images/tool-position.jpg' },
-            { title: 'Calendrier Économique', img: '/images/tool-calendar.jpg' },
-            { title: 'Simulateur Risk of Ruin', img: '/images/tool-risk.jpg' },
-            { title: 'Edge Calculator', img: '/images/tool-edge.jpg' }
+            { title: t.tool1Name, img: '/images/tool-position.jpg' },
+            { title: t.tool2Name, img: '/images/tool-calendar.jpg' },
+            { title: t.tool3Name, img: '/images/tool-risk.jpg' },
+            { title: t.tool4Name, img: '/images/tool-edge.jpg' }
           ].map((tool, i) => (
             <div key={i} className="bg-[#0a0a0a] border border-white/5 rounded-xl overflow-hidden flex flex-col hover:border-white/20 transition-all group shadow-none">
               <div className="h-40 bg-zinc-900 w-full relative">
@@ -142,7 +142,7 @@ export function ShowcaseView() {
               <div className="p-6 flex flex-col flex-1 items-center text-center justify-between gap-6">
                 <h4 className="font-bold text-lg text-white">{tool.title}</h4>
                 <button onClick={toggleTerminalMode} className="w-full bg-white/5 hover:bg-white text-white hover:text-black py-3 rounded-lg font-bold text-sm transition-colors flex items-center justify-center gap-2 border border-white/10 hover:border-transparent">
-                  Ouvrir <MonitorPlay className="w-4 h-4" />
+                  {t.btnOpen} <MonitorPlay className="w-4 h-4" />
                 </button>
               </div>
             </div>

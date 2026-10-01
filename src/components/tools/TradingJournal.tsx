@@ -114,7 +114,7 @@ export function TradingJournal() {
         <div className="xl:col-span-2 glass-panel p-6 rounded-2xl border border-white/5 bg-[#050f05] shadow-[0_0_30px_rgba(34,197,94,0.03)] relative overflow-hidden flex flex-col h-[350px]">
           <div className="flex items-center gap-2 mb-6 relative z-10">
             <TrendingUp className="w-4 h-4 text-green-500" />
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider">Courbe d'Expérience (PnL)</h4>
+            <h4 className="text-sm font-bold text-white uppercase tracking-wider">{t.xpCurve}</h4>
           </div>
           <div className="flex-1 w-full min-h-0 relative z-10">
             <ResponsiveContainer width="100%" height="100%">
@@ -151,7 +151,7 @@ export function TradingJournal() {
         <div className="xl:col-span-1 glass-panel p-6 rounded-2xl border border-white/5 bg-[#0a0510] shadow-[0_0_30px_rgba(139,92,246,0.03)] relative overflow-hidden flex flex-col h-[350px]">
           <div className="flex items-center gap-2 mb-2 relative z-10">
             <Shield className="w-4 h-4 text-violet-500" />
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider">Arbre de Compétences</h4>
+            <h4 className="text-sm font-bold text-white uppercase tracking-wider">{t.skillTree}</h4>
           </div>
           <div className="flex-1 w-full min-h-0 -mt-2 relative z-10">
             <ResponsiveContainer width="100%" height="100%">
@@ -190,7 +190,7 @@ export function TradingJournal() {
           </select>
           <input type="number" step="0.1" value={result} onChange={e => setResult(Number(e.target.value))} className="w-24 bg-black/50 border border-white/10 rounded-lg p-2.5 text-white outline-none text-xs focus:border-blue-500/50 font-bold transition-colors" placeholder="R:R" />
           <button onClick={addEntry} className="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-bold hover:bg-blue-500 transition-colors flex items-center justify-center gap-2 ml-auto text-xs shadow-[0_0_15px_rgba(37,99,235,0.3)] hover:shadow-[0_0_20px_rgba(37,99,235,0.5)]">
-            <Plus className="w-4 h-4" /> Ajouter
+            <Plus className="w-4 h-4" /> {t.btnAdd}
           </button>
         </div>
 
