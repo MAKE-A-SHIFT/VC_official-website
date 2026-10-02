@@ -28,9 +28,9 @@ export function TerminalView() {
       <div className="flex items-center gap-8 mb-12 border-b border-white/5 pb-4">
         <button
           onClick={() => setActiveTab('TRADING')}
-          className={\`text-sm font-bold tracking-widest uppercase transition-colors relative \${
+          className={`text-sm font-bold tracking-widest uppercase transition-colors relative ${
             activeTab === 'TRADING' ? 'text-white' : 'text-white/30 hover:text-white/60'
-          }\`}
+          }`}
         >
           TRADING
           {activeTab === 'TRADING' && (
@@ -39,9 +39,9 @@ export function TerminalView() {
         </button>
         <button
           onClick={() => setActiveTab('CRYPTO')}
-          className={\`text-sm font-bold tracking-widest uppercase transition-colors relative \${
+          className={`text-sm font-bold tracking-widest uppercase transition-colors relative ${
             activeTab === 'CRYPTO' ? 'text-white' : 'text-white/30 hover:text-white/60'
-          }\`}
+          }`}
         >
           CRYPTO
           {activeTab === 'CRYPTO' && (
