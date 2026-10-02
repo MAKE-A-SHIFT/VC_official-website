@@ -3,7 +3,9 @@ import React, { useState, useEffect, useMemo } from "react";
 import { AreaChart, Area, RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Cell } from "recharts";
 import { useAppStore } from "@/store/useAppStore";
 import { translations } from "@/i18n";
-import { Crosshair, AlertCircle, BookOpen, TrendingUp, Filter, Activity, Plus, X, Calendar, ArrowRight, Tag, Trash2, LayoutDashboard, Target } from "lucide-react";
+import { Crosshair, AlertCircle, BookOpen, TrendingUp, Filter, Activity, Plus, X, Calendar, ArrowRight, Tag, Trash2, LayoutDashboard, Target, HelpCircle } from "lucide-react";
+import { driver } from "driver.js";
+import "driver.js/dist/driver.css";
 
 // --- TYPES ---
 interface Trade {
@@ -27,6 +29,71 @@ const DEFAULT_PLAYBOOKS = ["Silver Bullet", "London Breakout", "FVG Retracement"
 export function TradingJournal() {
   const { language } = useAppStore();
   const t = (translations[language].terminal as any) || {};
+
+  const startTour = () => {
+    const d = driver({
+      showProgress: true,
+      animate: true,
+      allowClose: true,
+      doneBtnText: 'Commencer !',
+      nextBtnText: 'Suivant ➔',
+      prevBtnText: '⬅ Précédent',
+      steps: [
+        {
+          element: '#tour-header',
+          popover: {
+            title: 'Bienvenue dans ton Journal Pro 🚀',
+            description: 'Cet outil remplace les vieux journaux Excel. Il calcule automatiquement tes stats et repère tes mauvaises habitudes.',
+            side: 'bottom', align: 'start'
+          }
+        },
+        {
+          element: '#tour-account-switcher',
+          popover: {
+            title: 'Filtre par Compte',
+            description: 'Sépare tes trades Funded, Challenge ou Perso pour analyser tes performances sans les mélanger.',
+            side: 'bottom', align: 'center'
+          }
+        },
+        {
+          element: '#tour-kpis',
+          popover: {
+            title: 'KPIs en Temps Réel',
+            description: 'Ton PnL Net, Win Rate et Profit Factor s\'actualisent instantanément à chaque nouveau trade.',
+            side: 'bottom', align: 'start'
+          }
+        },
+        {
+          element: '#tour-rpg-stats',
+          popover: {
+            title: 'Ton Profil Psychologique',
+            description: 'C\'est ici qu\'on gamifie. Fais une erreur (ex: FOMO), et tes statistiques de discipline baisseront. Gère bien ton risque, et ton niveau montera.',
+            side: 'left', align: 'start'
+          }
+        },
+        {
+          element: '#tour-tabs',
+          popover: {
+            title: 'Navigue dans tes Données',
+            description: 'Explore tes Rapports, évalue tes Stratégies (Playbooks) et consulte ton registre complet de trades.',
+            side: 'top', align: 'center'
+          }
+        },
+        {
+          element: '#tour-tab-LOGBOOK',
+          popover: {
+            title: 'Ajoute ton Premier Trade !',
+            description: 'Clique sur cet onglet, puis sur "Add Trade" pour démarrer. Déclare tes profits, tes Drawdowns (MFE/MAE) et laisse la magie opérer.',
+            side: 'bottom', align: 'center'
+          }
+        }
+      ]
+    });
+    
+    setActiveTab('DASHBOARD');
+    setTimeout(() => d.drive(), 300);
+  };
+
 
   // --- ÉTATS ---
   const [isMounted, setIsMounted] = useState(false);
@@ -158,7 +225,7 @@ export function TradingJournal() {
   const renderDashboard = () => (
     <div className="space-y-8 animate-in fade-in duration-500">
       {/* KPIs Minimalistes type Tradezella */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+      <div id="tour-kpis" className="grid grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="bg-[#111113] border border-white/5 rounded-2xl p-6 flex flex-col justify-between h-32">
           <p className="text-xs text-zinc-500 font-bold tracking-widest uppercase">Net PnL</p>
           <p className={`text-3xl font-black tracking-tighter ${stats.totalPnL >= 0 ? 'text-green-500' : 'text-red-500'}`}>
@@ -218,7 +285,7 @@ export function TradingJournal() {
           </div>
         </div>
 
-        <div className="bg-[#111113] border border-white/5 rounded-2xl p-6">
+        <div id="tour-rpg-stats" className="bg-[#111113] border border-white/5 rounded-2xl p-6">
           <h4 className="text-sm font-bold text-white mb-6 flex items-center gap-2">
             <Activity className="w-4 h-4 text-zinc-400" /> RPG Stats
           </h4>
@@ -415,7 +482,7 @@ export function TradingJournal() {
     <div className="w-full relative">
       
       {/* HEADER TABS - Clean & Intuitive */}
-      <div className="flex border-b border-white/5 mb-8 overflow-x-auto hide-scrollbar gap-2">
+      <div id="tour-tabs" className="flex border-b border-white/5 mb-8 overflow-x-auto hide-scrollbar gap-2">
         {[
           { id: 'DASHBOARD', icon: LayoutDashboard, label: 'Dashboard' },
           { id: 'LOGBOOK', icon: BookOpen, label: 'Logbook' },
@@ -424,6 +491,7 @@ export function TradingJournal() {
         ].map(tab => (
           <button
             key={tab.id}
+            id={"tour-tab-" + tab.id}
             onClick={() => setActiveTab(tab.id as any)}
             className={`flex items-center gap-2 px-6 py-4 text-xs font-bold uppercase tracking-widest transition-all rounded-t-xl relative ${
               activeTab === tab.id ? 'text-white bg-[#111113] border-t border-l border-r border-white/5' : 'text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.02]'
@@ -437,7 +505,7 @@ export function TradingJournal() {
 
       {/* ACCOUNT SWITCHER - Flottant pour un "low cognitive load" */}
       {activeTab !== 'PLAYBOOKS' && activeTab !== 'REPORTS' && (
-        <div className="flex items-center gap-2 mb-8 bg-[#111113] border border-white/5 p-1.5 rounded-xl w-fit">
+        <div id="tour-account-switcher" className="flex items-center gap-2 mb-8 bg-[#111113] border border-white/5 p-1.5 rounded-xl w-fit">
           {['ALL', 'FUNDED_1', 'CHALLENGE'].map(acc => (
             <button 
               key={acc}
