@@ -4,7 +4,10 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 // Cache pour 6 heures
 export const revalidate = 21600;
 
-export async function GET() {
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const lang = searchParams.get('lang') || 'en';
+
   try {
     // 1. Fetch DefiLlama (Top protocoles par frais/revenus générés)
     const llamaRes = await fetch('https://api.llama.fi/overview/fees?excludeTotalDataChart=true&excludeTotalDataChartBreakdown=true&dataType=dailyFees');
@@ -20,7 +23,7 @@ export async function GET() {
       revenue30d: '$' + (p.total30d / 1000000).toFixed(1) + 'M'
     }));
 
-    // S'il n'y a pas de clé API Gemini ou si elle échoue, on renverra ces données de fallback
+    // Fallback data if Gemini fails
     const fallbackData = protocolNames.map((p: any, idx: number) => ({
       id: p.name.toUpperCase(),
       name: p.name,
@@ -28,14 +31,14 @@ export async function GET() {
       category: "DeFi Protocol",
       revenue30d: p.revenue30d,
       aiRiskScore: ["A", "B", "C"][idx % 3],
-      aiValuation: ["Sous-évalué", "Juste prix", "Surévalué"][idx % 3],
+      aiValuation: ["UNDERVALUED", "FAIR_VALUE", "OVERVALUED"][idx % 3],
       competitors: ["Competitor A", "Competitor B"],
-      aiAnalysis: "L'analyse IA est actuellement hors ligne car la clé API Gemini n'est pas configurée ou le modèle est inaccessible.",
+      aiAnalysis: "AI Analysis offline. Please set your GEMINI_API_KEY in .env.local or check the API quota.",
       status: "Fallback"
     }));
 
     if (!process.env.GEMINI_API_KEY) {
-      console.warn("Clé API Gemini manquante. Utilisation du Fallback.");
+      console.warn("Missing Gemini API Key. Using Fallback.");
       return NextResponse.json({ projects: fallbackData });
     }
 
@@ -43,20 +46,33 @@ export async function GET() {
       // 2. Google Gemini
       const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
       
-      // On teste avec gemini-pro (Gemini 1.0) qui est le plus stable universellement
-      const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+      // Upgrade to gemini-1.5-flash for reliability and speed
+      const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
-      const prompt = 'Tu es un analyste fondamental expert en cryptomonnaies travaillant pour un fonds institutionnel.\nVoici les 5 applications décentralisées générant le plus de revenus (Real Yield) sur les 30 derniers jours :\n' + JSON.stringify(protocolNames) + '\n\nPour CHAQUE protocole, génère une analyse sous format JSON STRICT. Ton retour doit être un tableau d\'objets avec ces clés exactes :\n- "name": le nom exact du protocole\n- "ticker": le symbole du jeton en MAJUSCULE\n- "category": la catégorie (ex: DEX, Lending, Liquid Staking, Stablecoin, etc.)\n- "aiRiskScore": une note parmi "A+", "A", "B", "C", "D"\n- "aiValuation": une valeur parmi "Sous-évalué", "Juste prix", "Surévalué"\n- "competitors": un tableau de 2 à 3 noms de concurrents directs (ex: ["Aave", "Compound"])\n- "aiAnalysis": Une analyse pointue et institutionnelle (en français, 3 phrases maximum) expliquant l\'avantage concurrentiel, le risque majeur et la thèse de valorisation basée sur les revenus.\n\nNe renvoie RIEN d\'autre que le tableau JSON. Pas de texte introductif, pas de balises markdown. UNIQUEMENT le JSON valide.';
+      const prompt = `You are an expert fundamental crypto analyst for an institutional fund.
+Here are the top 5 dApps by revenue (Real Yield) over the last 30 days:
+${JSON.stringify(protocolNames)}
+
+For EACH protocol, generate an analysis in STRICT JSON format. Your output must be an array of objects with exactly these keys:
+- "name": exact protocol name
+- "ticker": token ticker in UPPERCASE
+- "category": category (e.g., DEX, Lending, Liquid Staking, Stablecoin)
+- "aiRiskScore": one grade among "A+", "A", "B", "C", "D"
+- "aiValuation": STRICTLY USE ONE OF THESE EXACT STRINGS: "UNDERVALUED", "FAIR_VALUE", "OVERVALUED"
+- "competitors": an array of 2 to 3 direct competitor names (e.g., ["Aave", "Compound"])
+- "aiAnalysis": A sharp, institutional fundamental analysis (STRICTLY TRANSLATED TO THIS LANGUAGE CODE: ${lang}, maximum 3 sentences) explaining the competitive advantage, major risk, and valuation thesis based on revenue.
+
+Do not output any introductory text or markdown tags. ONLY valid JSON.`;
 
       const result = await model.generateContent(prompt);
       let responseText = result.response.text();
       
-      // Nettoyage Markdown
+      // Markdown cleanup
       responseText = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
       
       const aiAnalysis = JSON.parse(responseText);
 
-      // 3. Fusion
+      // 3. Merge
       const finalData = aiAnalysis.map((ai: any) => {
         const llamaProto = protocolNames.find((p: any) => p.name.toLowerCase().includes(ai.name.toLowerCase()) || ai.name.toLowerCase().includes(p.name.toLowerCase()));
         return {
@@ -76,12 +92,12 @@ export async function GET() {
       return NextResponse.json({ projects: finalData });
       
     } catch (aiError: any) {
-      console.error("Erreur Gemini, utilisation du Fallback:", aiError.message);
+      console.error("Gemini Error, using Fallback:", aiError.message);
       return NextResponse.json({ projects: fallbackData });
     }
 
   } catch (error: any) {
-    console.error("Erreur générale Scanner API:", error);
-    return NextResponse.json({ error: "Impossible de récupérer les données DefiLlama." }, { status: 500 });
+    console.error("Scanner API general error:", error);
+    return NextResponse.json({ error: "Cannot fetch DefiLlama data at the moment." }, { status: 500 });
   }
 }

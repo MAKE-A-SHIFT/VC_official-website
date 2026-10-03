@@ -1,5 +1,6 @@
 export const translations = {
   fr: {
+    scanTitle: "Scanner Fondamental IA", scanDesc: "Évaluation P/S, Risque & Avantage Concurrentiel", scanActive: "RÉSEAU NEURAL ACTIF...", scanDone: "DONNÉES À JOUR", scanProj: "Projet Web3", scanRev: "Revenus (30j)", scanRisk: "Score Risque IA", scanVal: "Valorisation", scanAnal: "Analyse", scanGrade: "Grade", scanRep: "Rapport d'Intelligence Artificielle", scanGen: "GÉNÉRÉ", scanComp: "Concurrents analysés :", scanErr: "Scanner Hors Ligne", scanUnder: "Sous-évalué", scanFair: "Juste prix", scanOver: "Surévalué", scanFall: "Ajoute une clé GEMINI_API_KEY dans ton fichier .env.local.",
     tjManageAcc: "Gestion des Comptes", tjNoAcc: "Aucun compte créé.", tjAddAccBtn: "Ajouter un compte", tjRenameBtn: "Renommer", tjDeleteBtn: "Supprimer",
     compTitleTrading: "Compétitions Trading Pro", compTitleCrypto: "Compétitions Crypto & Web3", compSearch: "Rechercher des compétitions", compSearching: "Recherche en cours...", compJoin: "S'inscrire / Info", compHybrid: "Hybride (Trad/Crypto)", compPrize: "Prix", compEntry: "Entrée", compDate: "Date", tjNewPbPrompt: "Nom de la nouvelle méthode (Playbook) :", tjNewAccPrompt: "Nom du nouveau compte :", tjRenAccPrompt: "Renommer le compte :", tjDelAccPrompt: "Supprimer ce compte et tous ses trades ?", tjCompPerf: "Comparaison des Performances", termTour: "Tutoriel du Terminal", termCompTrading: "Compétitions Trading Globales", termCompCrypto: "Tournois Crypto", termWeb3: "Intelligence Web3 & Crypto", heroCtaTerminal: "Rejoindre TA Salle des Marchés",
     navTerminal: 'TERMINAL', navShowcase: 'L\'ACADÉMIE',
@@ -44,6 +45,7 @@ export const translations = {
     }
   },
   it: {
+    scanTitle: "Scanner Fondamentale IA", scanDesc: "Valutazione P/S, Rischio & Vantaggio Competitivo", scanActive: "RETE NEURALE ATTIVA...", scanDone: "DATI AGGIORNATI", scanProj: "Progetto Web3", scanRev: "Entrate (30g)", scanRisk: "Punteggio Rischio IA", scanVal: "Valutazione", scanAnal: "Analisi", scanGrade: "Grado", scanRep: "Rapporto di Intelligenza Artificiale", scanGen: "GENERATO", scanComp: "Concorrenti analizzati:", scanErr: "Scanner Offline", scanUnder: "Sottovalutato", scanFair: "Prezzo giusto", scanOver: "Sopravvalutato", scanFall: "Aggiungi una chiave GEMINI_API_KEY nel tuo file .env.local.",
     tjManageAcc: "Gestione dei Conti", tjNoAcc: "Nessun conto creato.", tjAddAccBtn: "Aggiungi un conto", tjRenameBtn: "Rinomina", tjDeleteBtn: "Elimina",
     compTitleTrading: "Competizioni Trading Pro", compTitleCrypto: "Competizioni Crypto & Web3", compSearch: "Cerca competizioni", compSearching: "Ricerca in corso...", compJoin: "Iscriviti / Info", compHybrid: "Ibrido (Trad/Crypto)", compPrize: "Premio", compEntry: "Ingresso", compDate: "Data", tjNewPbPrompt: "Nome del nuovo metodo (Playbook) :", tjNewAccPrompt: "Nome del nuovo conto :", tjRenAccPrompt: "Rinomina il conto :", tjDelAccPrompt: "Eliminare questo conto e tutti i suoi trade ?", tjCompPerf: "Confronto delle Performance", termTour: "Tutorial del Terminale", termCompTrading: "Competizioni Trading Globali", termCompCrypto: "Tornei Crypto", termWeb3: "Intelligenza Web3 & Crypto", heroCtaTerminal: "Unisciti alla TUA Sala Operativa",
     navTerminal: 'TERMINALE', navShowcase: 'ACCADEMIA',
@@ -88,6 +90,7 @@ export const translations = {
     }
   },
   es: {
+    scanTitle: "Escáner Fundamental IA", scanDesc: "Evaluación P/S, Riesgo y Ventaja Competitiva", scanActive: "RED NEURONAL ACTIVA...", scanDone: "DATOS ACTUALIZADOS", scanProj: "Proyecto Web3", scanRev: "Ingresos (30d)", scanRisk: "Puntuación de Riesgo IA", scanVal: "Valoración", scanAnal: "Análisis", scanGrade: "Grado", scanRep: "Informe de Inteligencia Artificial", scanGen: "GENERADO", scanComp: "Competidores analizados:", scanErr: "Escáner Fuera de Línea", scanUnder: "Infravalorado", scanFair: "Valor justo", scanOver: "Sobrevalorado", scanFall: "Añade una clave GEMINI_API_KEY en tu archivo .env.local.",
     tjManageAcc: "Gestión de Cuentas", tjNoAcc: "Ninguna cuenta creada.", tjAddAccBtn: "Añadir una cuenta", tjRenameBtn: "Renombrar", tjDeleteBtn: "Eliminar",
     compTitleTrading: "Competiciones Trading Pro", compTitleCrypto: "Competiciones Crypto y Web3", compSearch: "Buscar competiciones", compSearching: "Búsqueda en curso...", compJoin: "Inscribirse / Info", compHybrid: "Híbrido (Trad/Crypto)", compPrize: "Premio", compEntry: "Entrada", compDate: "Fecha", tjNewPbPrompt: "Nombre del nuevo método (Playbook) :", tjNewAccPrompt: "Nombre de la nueva cuenta :", tjRenAccPrompt: "Renombrar la cuenta :", tjDelAccPrompt: "¿Eliminar esta cuenta y todos sus trades?", tjCompPerf: "Comparación de Rendimiento", termTour: "Tutorial del Terminal", termCompTrading: "Competiciones Globales de Trading", termCompCrypto: "Torneos Crypto", termWeb3: "Inteligencia Web3 y Crypto", heroCtaTerminal: "Únete a TU Sala de Trading",
     navTerminal: 'TERMINAL', navShowcase: 'ACADEMIA',
@@ -132,6 +135,7 @@ export const translations = {
     }
   },
   de: {
+    scanTitle: "KI-Fundamental-Scanner", scanDesc: "P/S-Bewertung, Risiko & Wettbewerbsvorteil", scanActive: "NEURONALES NETZWERK AKTIV...", scanDone: "DATEN AKTUELL", scanProj: "Web3-Projekt", scanRev: "Umsatz (30T)", scanRisk: "KI-Risiko-Score", scanVal: "Bewertung", scanAnal: "Analyse", scanGrade: "Grad", scanRep: "Künstliche Intelligenz Bericht", scanGen: "GENERIERT", scanComp: "Analysierte Wettbewerber:", scanErr: "Scanner Offline", scanUnder: "Unterbewertet", scanFair: "Faire Bewertung", scanOver: "Überbewertet", scanFall: "Füge einen GEMINI_API_KEY in deiner .env.local Datei hinzu.",
     tjManageAcc: "Kontoverwaltung", tjNoAcc: "Kein Konto erstellt.", tjAddAccBtn: "Konto hinzufügen", tjRenameBtn: "Umbenennen", tjDeleteBtn: "Löschen",
     compTitleTrading: "Pro-Trading-Wettbewerbe", compTitleCrypto: "Krypto- & Web3-Wettbewerbe", compSearch: "Wettbewerbe suchen", compSearching: "Suche läuft...", compJoin: "Teilnehmen / Info", compHybrid: "Hybrid (Trad/Krypto)", compPrize: "Preis", compEntry: "Eintritt", compDate: "Datum", tjNewPbPrompt: "Name der neuen Methode (Playbook):", tjNewAccPrompt: "Name des neuen Kontos:", tjRenAccPrompt: "Konto umbenennen:", tjDelAccPrompt: "Dieses Konto und alle seine Trades löschen?", tjCompPerf: "Leistungsvergleich", termTour: "Terminal-Tutorial", termCompTrading: "Globale Trading-Wettbewerbe", termCompCrypto: "Krypto-Turniere", termWeb3: "Web3 & Krypto-Intelligenz", heroCtaTerminal: "Tritt DEINEM Trading-Raum bei",
     navTerminal: 'TERMINAL', navShowcase: 'AKADEMIE',
@@ -176,6 +180,7 @@ export const translations = {
     }
   },
   ru: {
+    scanTitle: "Фундаментальный Сканер ИИ", scanDesc: "Оценка P/S, Риск и Конкурентное преимущество", scanActive: "НЕЙРОСЕТЬ АКТИВНА...", scanDone: "ДАННЫЕ ОБНОВЛЕНЫ", scanProj: "Web3 Проект", scanRev: "Доход (30д)", scanRisk: "Оценка Риска ИИ", scanVal: "Оценка", scanAnal: "Анализ", scanGrade: "Класс", scanRep: "Отчет Искусственного Интеллекта", scanGen: "СГЕНЕРИРОВАНО", scanComp: "Проанализированные конкуренты:", scanErr: "Сканер не в сети", scanUnder: "Недооценен", scanFair: "Справедливая цена", scanOver: "Переоценен", scanFall: "Добавьте ключ GEMINI_API_KEY в файл .env.local.",
     tjManageAcc: "Управление счетами", tjNoAcc: "Счета не созданы.", tjAddAccBtn: "Добавить счет", tjRenameBtn: "Переименовать", tjDeleteBtn: "Удалить",
     compTitleTrading: "Турниры Pro Trading", compTitleCrypto: "Турниры Crypto & Web3", compSearch: "Поиск турниров", compSearching: "Поиск...", compJoin: "Участвовать / Инфо", compHybrid: "Гибрид (Трад/Крипто)", compPrize: "Приз", compEntry: "Вход", compDate: "Дата", tjNewPbPrompt: "Название нового метода (Playbook):", tjNewAccPrompt: "Название нового счета:", tjRenAccPrompt: "Переименовать счет:", tjDelAccPrompt: "Удалить этот счет и все его сделки?", tjCompPerf: "Сравнение производительности", termTour: "Учебник по Терминалу", termCompTrading: "Глобальные Торговые Турниры", termCompCrypto: "Крипто Турниры", termWeb3: "Web3 & Крипто Интеллект", heroCtaTerminal: "Присоединяйтесь к ТВОЕМУ торговому залу",
     navTerminal: 'ТЕРМИНАЛ', navShowcase: 'АКАДЕМИЯ',
@@ -220,6 +225,7 @@ export const translations = {
     }
   },
   ja: {
+    scanTitle: "AIファンダメンタルスキャナー", scanDesc: "P/S評価、リスク＆競争優位性", scanActive: "ニューラルネットワークアクティブ...", scanDone: "最新データ", scanProj: "Web3プロジェクト", scanRev: "収益（30日）", scanRisk: "AIリスクスコア", scanVal: "評価", scanAnal: "分析", scanGrade: "グレード", scanRep: "人工知能レポート", scanGen: "生成済み", scanComp: "分析された競合他社:", scanErr: "スキャナーオフライン", scanUnder: "過小評価", scanFair: "適正価格", scanOver: "過大評価", scanFall: ".env.local ファイルに GEMINI_API_KEY を追加してください。",
     tjManageAcc: "口座管理", tjNoAcc: "口座が作成されていません。", tjAddAccBtn: "口座を追加", tjRenameBtn: "名前を変更", tjDeleteBtn: "削除",
     compTitleTrading: "プロトレーディングコンペティション", compTitleCrypto: "暗号通貨＆Web3コンペティション", compSearch: "コンペティションを検索", compSearching: "検索中...", compJoin: "参加する / 情報", compHybrid: "ハイブリッド (伝統/暗号)", compPrize: "賞", compEntry: "参加", compDate: "日付", tjNewPbPrompt: "新しいメソッド（Playbook）の名前:", tjNewAccPrompt: "新しい口座の名前:", tjRenAccPrompt: "口座の名前を変更:", tjDelAccPrompt: "この口座とすべてのトレードを削除しますか？", tjCompPerf: "パフォーマンス比較", termTour: "ターミナルチュートリアル", termCompTrading: "グローバルトレーディングコンペティション", termCompCrypto: "暗号通貨トーナメント", termWeb3: "Web3 ＆ 暗号通貨インテリジェンス", heroCtaTerminal: "あなたのトレーディングルームに参加",
     navTerminal: 'ターミナル', navShowcase: 'アカデミー',

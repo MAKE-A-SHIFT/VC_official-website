@@ -1,6 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { BrainCircuit, Activity, AlertTriangle, TrendingUp, TrendingDown, Cpu, ChevronDown, ChevronUp } from "lucide-react";
+import { useAppStore } from "@/store/useAppStore";
+import { translations } from "@/i18n";
 
 interface CryptoProject {
   id: string;
@@ -9,13 +11,16 @@ interface CryptoProject {
   category: string;
   revenue30d: string;
   aiRiskScore: "A+" | "A" | "B" | "C" | "D";
-  aiValuation: "Sous-évalué" | "Juste prix" | "Surévalué";
+  aiValuation: "UNDERVALUED" | "FAIR_VALUE" | "OVERVALUED";
   competitors: string[];
   aiAnalysis: string;
-  status: "Analyzing..." | "Completed";
+  status: "Analyzing..." | "Completed" | "Fallback";
 }
 
 export function CryptoAIScanner() {
+  const { language } = useAppStore();
+  const t = (translations as any)[language];
+
   const [isScanning, setIsScanning] = useState(true);
   const [projects, setProjects] = useState<CryptoProject[]>([]);
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -25,7 +30,7 @@ export function CryptoAIScanner() {
     async function fetchScannerData() {
       try {
         setIsScanning(true);
-        const res = await fetch('/api/scanner');
+        const res = await fetch(`/api/scanner?lang=${language}`);
         const data = await res.json();
         
         if (data.error) {
@@ -34,18 +39,19 @@ export function CryptoAIScanner() {
           return;
         }
 
-        setProjects(data.projects);
+        setProjects(data.projects || []);
       } catch (err) {
-        setError("Impossible de contacter le serveur d'IA");
+        setError("Network Error");
       } finally {
         setIsScanning(false);
       }
     }
 
     fetchScannerData();
-  }, []);
+  }, [language]);
 
   const getRiskColor = (score: string) => {
+    if (!score) return "text-zinc-500";
     if (score.includes("A")) return "text-green-500 bg-green-500/10 border-green-500/20";
     if (score.includes("B")) return "text-blue-500 bg-blue-500/10 border-blue-500/20";
     if (score.includes("C")) return "text-yellow-500 bg-yellow-500/10 border-yellow-500/20";
@@ -53,26 +59,32 @@ export function CryptoAIScanner() {
   };
 
   const getValuationColor = (val: string) => {
-    if (val === "Sous-évalué") return "text-green-400";
-    if (val === "Surévalué") return "text-red-400";
+    if (val === "UNDERVALUED") return "text-green-400";
+    if (val === "OVERVALUED") return "text-red-400";
     return "text-zinc-400";
+  };
+
+  const getValuationText = (val: string) => {
+    if (val === "UNDERVALUED") return t.scanUnder;
+    if (val === "OVERVALUED") return t.scanOver;
+    return t.scanFair;
   };
 
   if (error) {
     return (
-      <div className="glass-panel p-6 rounded-2xl w-full border border-red-500/30 bg-red-500/5 text-center xl:col-span-12">
+      <div id="tour-crypto-scanner" className="glass-panel p-6 rounded-2xl w-full border border-red-500/30 bg-red-500/5 text-center xl:col-span-12">
         <AlertTriangle className="w-8 h-8 text-red-500 mx-auto mb-4" />
-        <h3 className="text-lg font-bold text-white mb-2">Scanner Hors Ligne</h3>
+        <h3 className="text-lg font-bold text-white mb-2">{t.scanErr}</h3>
         <p className="text-zinc-400 text-sm mb-4">{error}</p>
         <p className="text-xs text-zinc-500">
-          Ajoute une clé <code className="bg-black px-1 py-0.5 rounded">GEMINI_API_KEY</code> dans ton fichier <code className="bg-black px-1 py-0.5 rounded">.env.local</code>.
+          {t.scanFall}
         </p>
       </div>
     );
   }
 
   return (
-    <div className="glass-panel p-6 rounded-2xl w-full border border-white/5 relative overflow-hidden xl:col-span-12">
+    <div id="tour-crypto-scanner" className="glass-panel p-6 rounded-2xl w-full border border-white/5 relative overflow-hidden xl:col-span-12">
       {/* Background glow */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/5 blur-[120px] rounded-full pointer-events-none"></div>
 
@@ -80,16 +92,16 @@ export function CryptoAIScanner() {
         <div>
           <div className="flex items-center gap-3 mb-1">
             <BrainCircuit className="w-5 h-5 text-blue-500" />
-            <h3 className="text-xl font-bold tracking-tight text-white">Scanner Fondamental IA</h3>
+            <h3 className="text-xl font-bold tracking-tight text-white">{t.scanTitle}</h3>
           </div>
-          <p className="text-xs text-zinc-500 uppercase tracking-widest">Évaluation P/S, Risque & Avantage Concurrentiel</p>
+          <p className="text-xs text-zinc-500 uppercase tracking-widest">{t.scanDesc}</p>
         </div>
 
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 px-4 py-2 bg-black/50 border border-white/10 rounded-lg">
             <Cpu className={`w-4 h-4 ${isScanning ? "text-blue-500 animate-pulse" : "text-green-500"}`} />
             <span className="text-xs font-bold text-white/70">
-              {isScanning ? "RÉSEAU NEURAL ACTIF..." : "DONNÉES À JOUR"}
+              {isScanning ? t.scanActive : t.scanDone}
             </span>
           </div>
         </div>
@@ -99,11 +111,11 @@ export function CryptoAIScanner() {
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="border-b border-white/5 text-xs uppercase tracking-wider text-white/30">
-              <th className="pb-4 font-semibold pl-4">Projet Web3</th>
-              <th className="pb-4 font-semibold">Revenus (30j)</th>
-              <th className="pb-4 font-semibold">Score Risque IA</th>
-              <th className="pb-4 font-semibold">Valorisation</th>
-              <th className="pb-4 font-semibold text-right pr-4">Analyse</th>
+              <th className="pb-4 font-semibold pl-4">{t.scanProj}</th>
+              <th className="pb-4 font-semibold">{t.scanRev}</th>
+              <th className="pb-4 font-semibold">{t.scanRisk}</th>
+              <th className="pb-4 font-semibold">{t.scanVal}</th>
+              <th className="pb-4 font-semibold text-right pr-4">{t.scanAnal}</th>
             </tr>
           </thead>
           <tbody className="text-sm">
@@ -132,16 +144,16 @@ export function CryptoAIScanner() {
                   </td>
                   <td className="py-4">
                     <span className={`inline-flex items-center justify-center px-2.5 py-1 rounded-md border text-xs font-bold ${getRiskColor(p.aiRiskScore)}`}>
-                      Grade {p.aiRiskScore}
+                      {t.scanGrade} {p.aiRiskScore}
                     </span>
                   </td>
                   <td className="py-4">
                     <div className="flex items-center gap-2">
-                      {p.aiValuation === "Sous-évalué" && <TrendingUp className="w-3 h-3 text-green-400" />}
-                      {p.aiValuation === "Surévalué" && <TrendingDown className="w-3 h-3 text-red-400" />}
-                      {p.aiValuation === "Juste prix" && <Activity className="w-3 h-3 text-zinc-400" />}
+                      {p.aiValuation === "UNDERVALUED" && <TrendingUp className="w-3 h-3 text-green-400" />}
+                      {p.aiValuation === "OVERVALUED" && <TrendingDown className="w-3 h-3 text-red-400" />}
+                      {p.aiValuation === "FAIR_VALUE" && <Activity className="w-3 h-3 text-zinc-400" />}
                       <span className={`font-bold text-xs ${getValuationColor(p.aiValuation)}`}>
-                        {p.aiValuation}
+                        {getValuationText(p.aiValuation)}
                       </span>
                     </div>
                   </td>
@@ -163,13 +175,13 @@ export function CryptoAIScanner() {
                           </div>
                           <div>
                             <h4 className="text-white font-bold mb-2 flex items-center gap-2">
-                              Rapport d'Intelligence Artificielle <span className="text-[9px] px-2 py-0.5 bg-blue-500/20 text-blue-400 rounded-full">GÉNÉRÉ</span>
+                              {t.scanRep} <span className="text-[9px] px-2 py-0.5 bg-blue-500/20 text-blue-400 rounded-full">{t.scanGen}</span>
                             </h4>
                             <p className="text-sm text-zinc-400 leading-relaxed mb-4">
                               {p.aiAnalysis}
                             </p>
                             <div className="flex items-center gap-4">
-                              <span className="text-xs text-zinc-500 font-bold uppercase tracking-wider">Concurrents analysés :</span>
+                              <span className="text-xs text-zinc-500 font-bold uppercase tracking-wider">{t.scanComp}</span>
                               <div className="flex gap-2">
                                 {p.competitors.map((comp, idx) => (
                                   <span key={idx} className="text-xs px-2 py-1 bg-white/5 border border-white/10 rounded-md text-white/70">
