@@ -148,6 +148,11 @@ export function TerminalView() {
         ja: { d: '終了', n: '次へ →', p: '← 前へ' }
       }[language] || { d: 'Finish', n: 'Next →', p: '← Prev' };
 
+      const getVoiceLang = (l: string) => {
+        const map: Record<string, string> = { fr: 'fr-FR', en: 'en-US', it: 'it-IT', es: 'es-ES', de: 'de-DE', ru: 'ru-RU', ja: 'ja-JP' };
+        return map[l] || 'en-US';
+      };
+
       const d = driver({
         showProgress: true,
         animate: true,
@@ -155,7 +160,22 @@ export function TerminalView() {
         doneBtnText: loc.d,
         nextBtnText: loc.n,
         prevBtnText: loc.p,
-        steps: steps as any
+        steps: steps as any,
+        onHighlightStarted: (element, step: any) => {
+          if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const textToSpeak = step.popover?.title + ". " + step.popover?.description;
+            const utterance = new SpeechSynthesisUtterance(textToSpeak);
+            utterance.lang = getVoiceLang(language);
+            utterance.rate = 1.05; // Léger boost de vitesse pour le dynamisme
+            window.speechSynthesis.speak(utterance);
+          }
+        },
+        onDestroyed: () => {
+          if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+          }
+        }
       });
 
       d.drive();
