@@ -3,7 +3,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { AreaChart, Area, RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Cell } from "recharts";
 import { useAppStore, Trade } from "@/store/useAppStore";
 import { translations } from "@/i18n";
-import { Crosshair, AlertCircle, BookOpen, TrendingUp, Filter, Activity, Plus, X, Calendar, ArrowRight, Tag, Trash2, LayoutDashboard, Target, HelpCircle } from "lucide-react";
+import { Crosshair, Edit2, AlertCircle, BookOpen, TrendingUp, Filter, Activity, Plus, X, Calendar, ArrowRight, Tag, Trash2, LayoutDashboard, Target, HelpCircle } from "lucide-react";
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
 

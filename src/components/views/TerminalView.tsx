@@ -75,7 +75,7 @@ export function TerminalView() {
     <div className="max-w-[1600px] mx-auto p-4 md:p-6 animate-in fade-in zoom-in-95 duration-500 mt-24">
       
       {/* HEADER & TOUR BUTTON */}
-      <div className="flex relative justify-center items-center mb-8 border-b border-white/5 pb-4" id="tour-terminal-tabs">
+      <div className="flex flex-col md:flex-row relative justify-center items-center gap-6 md:gap-0 mb-8 border-b border-white/5 pb-4" id="tour-terminal-tabs">
         <div className="flex items-center gap-8">
           <button
             onClick={() => setActiveTab('TRADING')}
@@ -102,7 +102,7 @@ export function TerminalView() {
         </div>
         <button 
           onClick={startTerminalTour}
-          className="absolute right-0 bg-white text-black px-4 py-2 rounded-xl text-sm font-bold hover:bg-zinc-200 transition-colors flex items-center gap-2 shadow-[0_0_15px_rgba(255,255,255,0.2)]"
+          className="md:absolute md:right-0 bg-white text-black px-4 py-2 rounded-xl text-sm font-bold hover:bg-zinc-200 transition-colors flex items-center gap-2 shadow-[0_0_15px_rgba(255,255,255,0.2)] w-full md:w-auto justify-center"
         >
           <HelpCircle className="w-4 h-4" /> Tutoriel du Terminal
         </button>

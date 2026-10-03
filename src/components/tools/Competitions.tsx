@@ -23,7 +23,7 @@ export function Competitions({ type }: { type: 'TRADING' | 'CRYPTO' }) {
       fee: "$10K (Real Account)",
       dd: "N/A (Compétition Réelle)",
       date: "Jan 2027",
-      hybrid: false,
+      hybrid: false, url: "https://www.worldcupchampionships.com/world-cup-trading-championships",
     },
     {
       name: "Darwinex Zero - DarwinIA",
@@ -33,7 +33,7 @@ export function Competitions({ type }: { type: 'TRADING' | 'CRYPTO' }) {
       fee: "€38/mois",
       dd: "10% Trailing",
       date: "Fin du mois en cours",
-      hybrid: false,
+      hybrid: false, url: "https://darwinexzero.com",
     },
     {
       name: "FTMO Trading Competition",
@@ -43,7 +43,7 @@ export function Competitions({ type }: { type: 'TRADING' | 'CRYPTO' }) {
       fee: "Gratuit",
       dd: "10% Max / 5% Daily",
       date: "Mensuelle",
-      hybrid: true,
+      hybrid: true, url: "https://ftmo.com",
     },
     ...(showMore ? [
       {
@@ -54,7 +54,7 @@ export function Competitions({ type }: { type: 'TRADING' | 'CRYPTO' }) {
         fee: "$49/mois",
         dd: "Trailing Max Drawdown",
         date: "En cours",
-        hybrid: false,
+        hybrid: false, url: "https://topstep.com",
       }
     ] : [])
   ] : [
@@ -66,7 +66,7 @@ export function Competitions({ type }: { type: 'TRADING' | 'CRYPTO' }) {
       fee: "500 USDT min balance",
       dd: "N/A",
       date: "Août 2027",
-      hybrid: false,
+      hybrid: false, url: "https://www.bybit.com/en/wsot2024",
     },
     {
       name: "Binance Futures Grand Tournament",
@@ -76,7 +76,7 @@ export function Competitions({ type }: { type: 'TRADING' | 'CRYPTO' }) {
       fee: "Wallet > 200 USDT",
       dd: "N/A",
       date: "Novembre 2026",
-      hybrid: false,
+      hybrid: false, url: "https://www.binance.com/en/futures-activity/tournament",
     },
     {
       name: "FTMO Trading Competition",
@@ -86,7 +86,7 @@ export function Competitions({ type }: { type: 'TRADING' | 'CRYPTO' }) {
       fee: "Gratuit",
       dd: "10% Max / 5% Daily",
       date: "Mensuelle",
-      hybrid: true,
+      hybrid: true, url: "https://ftmo.com",
     },
     ...(showMore ? [
       {
@@ -97,7 +97,7 @@ export function Competitions({ type }: { type: 'TRADING' | 'CRYPTO' }) {
         fee: "Volume Based",
         dd: "N/A",
         date: "Octobre 2026",
-        hybrid: false,
+        hybrid: false, url: "https://www.okx.com",
       }
     ] : [])
   ];
@@ -153,7 +153,7 @@ export function Competitions({ type }: { type: 'TRADING' | 'CRYPTO' }) {
               </div>
             </div>
             
-            <button className="w-full mt-6 bg-white/5 hover:bg-white/10 text-white font-bold py-2 rounded-lg text-sm transition-colors flex items-center justify-center gap-2">
+            <button onClick={() => window.open(comp.url || '#', '_blank')} className="w-full mt-6 bg-white/5 hover:bg-white/10 text-white font-bold py-2 rounded-lg text-sm transition-colors flex items-center justify-center gap-2">
               <Swords className="w-4 h-4" /> S'inscrire / Info
             </button>
           </div>

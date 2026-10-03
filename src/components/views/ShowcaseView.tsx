@@ -22,9 +22,16 @@ export function ShowcaseView() {
         <p className="text-xl text-zinc-400 max-w-2xl mx-auto leading-relaxed">
           {t.heroSub}
         </p>
-        <a href="https://t.me/vc_teamparaguay" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 bg-white text-black px-8 py-4 rounded-full font-bold text-lg hover:bg-zinc-200 transition-colors mt-8">
-          {t.heroCta} <ArrowRight className="w-5 h-5" />
-        </a>
+        
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
+          <a href="https://t.me/vc_teamparaguay" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-3 bg-white text-black px-8 py-4 rounded-full font-bold text-lg hover:bg-zinc-200 transition-colors w-full sm:w-auto">
+            {t.heroCta} <ArrowRight className="w-5 h-5" />
+          </a>
+          <button onClick={toggleTerminalMode} className="inline-flex items-center justify-center gap-3 bg-transparent border border-white/20 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white/5 transition-colors w-full sm:w-auto">
+            Rejoindre TA Salle des Marchés <MonitorPlay className="w-5 h-5" />
+          </button>
+        </div>
+
       </section>
 
       {/* Ton Chemin Avec Notre Académie */}
