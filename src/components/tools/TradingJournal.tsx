@@ -13,7 +13,7 @@ const AVAILABLE_MISTAKES = ["FOMO", "Revenge Trading", "Overleveraged", "Hesitat
 
 export function TradingJournal() {
   const { language } = useAppStore();
-  const t = (translations[language].terminal as any) || {};
+  const t = (translations[language].terminal as any) || {}; const tRoot = translations[language] as any;
 
   const startTour = () => {
     const d = driver({
@@ -84,7 +84,7 @@ export function TradingJournal() {
   const [isMounted, setIsMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<'DASHBOARD' | 'LOGBOOK' | 'PLAYBOOKS' | 'REPORTS'>('DASHBOARD');
   const { trades, setTrades, activeAccount, setActiveAccount, accounts, addAccount, removeAccount, playbooks, addPlaybook, removePlaybook } = useAppStore();
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false); const [dashLeftFilter, setDashLeftFilter] = useState("ALL"); const [dashRightFilter, setDashRightFilter] = useState("ALL"); useEffect(() => { setDashRightFilter(activeAccount === "ALL" ? "ALL" : "ACC_" + activeAccount); }, [activeAccount]); const handleNewPlaybook = () => { const name = window.prompt("Nom de la nouvelle m�thode (Playbook) :"); if (name && name.trim()) { addPlaybook(name.trim()); } }; const handleNewAccount = () => { const name = window.prompt("Nom du nouveau compte :"); if (name && name.trim()) { addAccount(name.trim()); } };
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false); const [dashLeftFilter, setDashLeftFilter] = useState("ALL"); const [dashRightFilter, setDashRightFilter] = useState("ALL"); useEffect(() => { setDashRightFilter(activeAccount === "ALL" ? "ALL" : "ACC_" + activeAccount); }, [activeAccount]); const handleNewPlaybook = () => { const name = window.prompt("Nom de la nouvelle m�thode (Playbook) :"); if (name && name.trim()) { addPlaybook(name.trim()); } }; const handleNewAccount = () => { const name = window.prompt(tRoot.tjNewAccPrompt); if (name && name.trim()) { addAccount(name.trim()); } };
 
   // Formulaire d'ajout
   const [formData, setFormData] = useState<Partial<Trade>>({
@@ -244,7 +244,7 @@ export function TradingJournal() {
       
       {/* Jumeaux: GENERAL vs SELECTED ACCOUNT */}
       <div className="flex items-center gap-4 mb-2">
-        <h3 className="font-bold text-white text-lg">Comparaison des Performances</h3>
+        <h3 className="font-bold text-white text-lg">{tRoot.tjCompPerf}</h3>
       </div>
       
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">

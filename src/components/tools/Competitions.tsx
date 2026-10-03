@@ -1,8 +1,12 @@
 "use client";
 import { useState } from "react";
+import { useAppStore } from "@/store/useAppStore";
+import { translations } from "@/i18n";
 import { Trophy, Swords, CalendarDays, DollarSign, ShieldAlert, Target, Search, Loader2 } from "lucide-react";
 
 export function Competitions({ type }: { type: 'TRADING' | 'CRYPTO' }) {
+  const { language } = useAppStore();
+  const t = translations[language];
   const [isSearching, setIsSearching] = useState(false);
   const [showMore, setShowMore] = useState(false);
 
@@ -109,7 +113,7 @@ export function Competitions({ type }: { type: 'TRADING' | 'CRYPTO' }) {
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-3">
           <Trophy className="w-5 h-5 text-amber-500" />
-          <h3 className="text-xl font-bold tracking-tight">Compétitions {type === 'TRADING' ? 'Trading Pro' : 'Crypto & Web3'}</h3>
+          <h3 className="text-xl font-bold tracking-tight">{type === 'TRADING' ? t.compTitleTrading : t.compTitleCrypto}</h3>
         </div>
         
         <button 
@@ -118,7 +122,7 @@ export function Competitions({ type }: { type: 'TRADING' | 'CRYPTO' }) {
           className="bg-white/5 hover:bg-white/10 text-white border border-white/10 px-4 py-2 rounded-lg text-xs font-bold transition-colors flex items-center gap-2"
         >
           {isSearching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
-          {isSearching ? "Recherche en cours..." : "Rechercher des compétitions"}
+          {isSearching ? "{t.compSearching}" : "{t.compSearch}"}
         </button>
       </div>
 
@@ -127,7 +131,7 @@ export function Competitions({ type }: { type: 'TRADING' | 'CRYPTO' }) {
           <div key={idx} className="bg-black/40 border border-white/5 p-5 rounded-xl hover:bg-white/[0.02] transition-colors relative">
             {comp.hybrid && (
               <span className="absolute -top-3 right-4 bg-violet-600/20 border border-violet-500/30 text-violet-400 text-[9px] font-bold px-2 py-1 rounded uppercase">
-                Hybride (Trad/Crypto)
+                {t.compHybrid}
               </span>
             )}
             
@@ -136,11 +140,11 @@ export function Competitions({ type }: { type: 'TRADING' | 'CRYPTO' }) {
             
             <div className="space-y-3">
               <div className="flex justify-between items-center text-sm">
-                <span className="flex items-center gap-2 text-white/40"><DollarSign className="w-4 h-4"/> Prize</span>
+                <span className="flex items-center gap-2 text-white/40"><DollarSign className="w-4 h-4"/> {t.compPrize}</span>
                 <span className="font-bold text-amber-400">{comp.prize}</span>
               </div>
               <div className="flex justify-between items-center text-sm">
-                <span className="flex items-center gap-2 text-white/40"><Target className="w-4 h-4"/> Entry</span>
+                <span className="flex items-center gap-2 text-white/40"><Target className="w-4 h-4"/> {t.compEntry}</span>
                 <span className="font-mono text-white/80">{comp.fee}</span>
               </div>
               <div className="flex justify-between items-center text-sm">
@@ -148,13 +152,13 @@ export function Competitions({ type }: { type: 'TRADING' | 'CRYPTO' }) {
                 <span className="font-mono text-red-400">{comp.dd}</span>
               </div>
               <div className="flex justify-between items-center text-sm">
-                <span className="flex items-center gap-2 text-white/40"><CalendarDays className="w-4 h-4"/> Date</span>
+                <span className="flex items-center gap-2 text-white/40"><CalendarDays className="w-4 h-4"/> {t.compDate}</span>
                 <span className="text-white/80">{comp.date}</span>
               </div>
             </div>
             
             <button onClick={() => window.open(comp.url || '#', '_blank')} className="w-full mt-6 bg-white/5 hover:bg-white/10 text-white font-bold py-2 rounded-lg text-sm transition-colors flex items-center justify-center gap-2">
-              <Swords className="w-4 h-4" /> S'inscrire / Info
+              <Swords className="w-4 h-4" /> {t.compJoin}
             </button>
           </div>
         ))}

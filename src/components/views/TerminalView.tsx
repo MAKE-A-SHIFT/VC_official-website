@@ -24,6 +24,7 @@ export function TerminalView() {
   const { language } = useAppStore();
   const [activeTab, setActiveTab] = useState<'TRADING' | 'CRYPTO'>('TRADING');
   const t = translations[language].terminal;
+  const tRoot = translations[language];
 
   const tourTranslations = {
     en: [
@@ -104,7 +105,7 @@ export function TerminalView() {
           onClick={startTerminalTour}
           className="md:absolute md:right-0 bg-white text-black px-4 py-2 rounded-xl text-sm font-bold hover:bg-zinc-200 transition-colors flex items-center gap-2 shadow-[0_0_15px_rgba(255,255,255,0.2)] w-full md:w-auto justify-center"
         >
-          <HelpCircle className="w-4 h-4" /> Tutoriel du Terminal
+          <HelpCircle className="w-4 h-4" /> {tRoot.termTour}
         </button>
       </div>
 
@@ -167,7 +168,7 @@ export function TerminalView() {
             {/* SECTION: COMPETITIONS TRADING */}
             <section className="animate-in fade-in duration-500 delay-200">
               <h2 className="text-white/30 font-bold tracking-widest text-xs mb-6 uppercase flex items-center gap-2">
-                 <Trophy className="w-4 h-4"/> Tournaments & Proving Grounds
+                 <Trophy className="w-4 h-4"/> {tRoot.termCompTrading}
               </h2>
               <div className="grid grid-cols-1 gap-6">
                 <Competitions type="TRADING" />
@@ -181,7 +182,7 @@ export function TerminalView() {
             {/* SECTION: WEB3 & CRYPTO INTELLIGENCE */}
             <section className="animate-in fade-in duration-500">
               <h2 className="text-white/30 font-bold tracking-widest text-xs mb-6 uppercase flex items-center gap-2">
-                 <BrainCircuit className="w-4 h-4"/> Web3 & Crypto Intelligence
+                 <BrainCircuit className="w-4 h-4"/> {tRoot.termWeb3}
               </h2>
               <div className="grid grid-cols-1 gap-6">
                 <CryptoAIScanner />
@@ -191,7 +192,7 @@ export function TerminalView() {
             {/* SECTION: COMPETITIONS CRYPTO */}
             <section className="animate-in fade-in duration-500 delay-100">
               <h2 className="text-white/30 font-bold tracking-widest text-xs mb-6 uppercase flex items-center gap-2">
-                 <Trophy className="w-4 h-4"/> Crypto Tournaments
+                 <Trophy className="w-4 h-4"/> {tRoot.termCompCrypto}
               </h2>
               <div className="grid grid-cols-1 gap-6">
                 <Competitions type="CRYPTO" />

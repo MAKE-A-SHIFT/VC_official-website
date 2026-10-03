@@ -1,18 +1,146 @@
 const fs = require('fs');
-const file = 'src/i18n/index.ts';
-let code = fs.readFileSync(file, 'utf8');
 
-const reps = [
-  { old: 'storyTitle: "POURQUOI JE FAIS CELA ?",', new: 'storyTitle1: "POURQUOI", storyTitle2: " JE FAIS CELA ?", manifestoTitle: "L\'Avant-Garde T\'Attend", manifestoText: "Le trading de détail est conçu pour vous faire échouer. Rejoignez l\'élite qui trade avec les données réelles et l\'Orderflow.", manifestoCta: "Rejoindre VALHALLA CAPITAL", legalMentions: "Mentions Légales", legalPrivacy: "Confidentialité", legalTerms: "CGU / CGV", legalRisk: "Divulgation des Risques", footerRisk: "AVERTISSEMENT SUR LES RISQUES : Le trading de CFD et Forex comporte un risque élevé. Valhalla Capital LLC opère sous la juridiction du Paraguay, conformément aux réglementations internationales en vigueur.",' },
-  { old: 'storyTitle: "PERCHÉ FACCIO QUESTO?",', new: 'storyTitle1: "PERCHÉ", storyTitle2: " FACCIO QUESTO?", manifestoTitle: "L\'Avanguardia Ti Aspetta", manifestoText: "Il trading retail è progettato per farti fallire. Unisciti all\'élite che opera con dati reali e Orderflow.", manifestoCta: "Unisciti a VALHALLA CAPITAL", legalMentions: "Note Legali", legalPrivacy: "Privacy", legalTerms: "Termini e Condizioni", legalRisk: "Informativa sui Rischi", footerRisk: "AVVERTENZA SUI RISCHI: Il trading di CFD e Forex comporta un rischio elevato. Valhalla Capital LLC opera sotto la giurisdizione del Paraguay.",' },
-  { old: 'storyTitle: "¿POR QUÉ HAGO ESTO?",', new: 'storyTitle1: "¿POR QUÉ", storyTitle2: " HAGO ESTO?", manifestoTitle: "La Vanguardia Te Espera", manifestoText: "El trading retail está diseñado para que fracases. Únete a la élite que opera con datos reales y Orderflow.", manifestoCta: "Únete a VALHALLA CAPITAL", legalMentions: "Aviso Legal", legalPrivacy: "Privacidad", legalTerms: "Términos y Condiciones", legalRisk: "Divulgación de Riesgos", footerRisk: "ADVERTENCIA DE RIESGO: El trading de CFD y Forex conlleva un alto riesgo. Valhalla Capital LLC opera bajo la jurisdicción de Paraguay.",' },
-  { old: 'storyTitle: "WARUM MACHE ICH DAS?",', new: 'storyTitle1: "WARUM", storyTitle2: " MACHE ICH DAS?", manifestoTitle: "Die Avantgarde Erwartet Dich", manifestoText: "Retail-Trading ist darauf ausgelegt, dass Sie scheitern. Schließen Sie sich der Elite an, die mit echten Daten und Orderflow tradet.", manifestoCta: "VALHALLA CAPITAL Beitreten", legalMentions: "Impressum", legalPrivacy: "Datenschutz", legalTerms: "AGB", legalRisk: "Risikohinweis", footerRisk: "RISIKOHINWEIS: Der Handel mit CFDs und Forex ist mit einem hohen Risiko verbunden. Valhalla Capital LLC operiert unter der Gerichtsbarkeit von Paraguay.",' },
-  { old: 'storyTitle: "ПОЧЕМУ Я ЭТО ДЕЛАЮ?",', new: 'storyTitle1: "ПОЧЕМУ", storyTitle2: " Я ЭТО ДЕЛАЮ?", manifestoTitle: "Авангард Ждет Тебя", manifestoText: "Ритейл-трейдинг создан для того, чтобы вы терпели неудачу. Присоединяйтесь к элите, торгующей на реальных данных и Orderflow.", manifestoCta: "Присоединиться к VALHALLA CAPITAL", legalMentions: "Юридическая Информация", legalPrivacy: "Конфиденциальность", legalTerms: "Условия Использования", legalRisk: "Уведомление о Рисках", footerRisk: "ПРЕДУПРЕЖДЕНИЕ О РИСКАХ: Торговля CFD и Forex сопряжена с высоким риском. Valhalla Capital LLC действует под юрисдикцией Парагвая.",' },
-  { old: 'storyTitle: "なぜこれを行うのか？",', new: 'storyTitle1: "なぜ", storyTitle2: " これを行うのか？", manifestoTitle: "アバンギャルドがあなたを待っています", manifestoText: "リテール取引はあなたが失敗するように設計されています。実際のデータとオーダーフローで取引するエリートに参加してください。", manifestoCta: "VALHALLA CAPITALに参加", legalMentions: "法的通知", legalPrivacy: "プライバシー", legalTerms: "利用規約", legalRisk: "リスク開示", footerRisk: "リスク警告：CFDおよびForexの取引には高いリスクが伴います。Valhalla Capital LLCはパラグアイの管轄下で運営されています。",' }
-];
+const i18nPath = 'src/i18n/index.ts';
+let i18nContent = fs.readFileSync(i18nPath, 'utf8');
 
-for (const r of reps) {
-  code = code.replace(r.old, r.new);
+const newTranslations = {
+  fr: {
+    compTitleTrading: "Compétitions Trading Pro",
+    compTitleCrypto: "Compétitions Crypto & Web3",
+    compSearch: "Rechercher des compétitions",
+    compSearching: "Recherche en cours...",
+    compJoin: "S'inscrire / Info",
+    compHybrid: "Hybride (Trad/Crypto)",
+    compPrize: "Prix",
+    compEntry: "Entrée",
+    compDate: "Date",
+    tjNewPbPrompt: "Nom de la nouvelle méthode (Playbook) :",
+    tjNewAccPrompt: "Nom du nouveau compte :",
+    tjRenAccPrompt: "Renommer le compte :",
+    tjDelAccPrompt: "Supprimer ce compte et tous ses trades ?",
+    tjCompPerf: "Comparaison des Performances",
+    termTour: "Tutoriel du Terminal",
+    termCompTrading: "Compétitions Trading Globales",
+    termCompCrypto: "Tournois Crypto",
+    termWeb3: "Intelligence Web3 & Crypto",
+    heroCtaTerminal: "Rejoindre TA Salle des Marchés"
+  },
+  it: {
+    compTitleTrading: "Competizioni Trading Pro",
+    compTitleCrypto: "Competizioni Crypto & Web3",
+    compSearch: "Cerca competizioni",
+    compSearching: "Ricerca in corso...",
+    compJoin: "Iscriviti / Info",
+    compHybrid: "Ibrido (Trad/Crypto)",
+    compPrize: "Premio",
+    compEntry: "Ingresso",
+    compDate: "Data",
+    tjNewPbPrompt: "Nome del nuovo metodo (Playbook) :",
+    tjNewAccPrompt: "Nome del nuovo conto :",
+    tjRenAccPrompt: "Rinomina il conto :",
+    tjDelAccPrompt: "Eliminare questo conto e tutti i suoi trade ?",
+    tjCompPerf: "Confronto delle Performance",
+    termTour: "Tutorial del Terminale",
+    termCompTrading: "Competizioni Trading Globali",
+    termCompCrypto: "Tornei Crypto",
+    termWeb3: "Intelligenza Web3 & Crypto",
+    heroCtaTerminal: "Unisciti alla TUA Sala Operativa"
+  },
+  es: {
+    compTitleTrading: "Competiciones Trading Pro",
+    compTitleCrypto: "Competiciones Crypto y Web3",
+    compSearch: "Buscar competiciones",
+    compSearching: "Búsqueda en curso...",
+    compJoin: "Inscribirse / Info",
+    compHybrid: "Híbrido (Trad/Crypto)",
+    compPrize: "Premio",
+    compEntry: "Entrada",
+    compDate: "Fecha",
+    tjNewPbPrompt: "Nombre del nuevo método (Playbook) :",
+    tjNewAccPrompt: "Nombre de la nueva cuenta :",
+    tjRenAccPrompt: "Renombrar la cuenta :",
+    tjDelAccPrompt: "¿Eliminar esta cuenta y todos sus trades?",
+    tjCompPerf: "Comparación de Rendimiento",
+    termTour: "Tutorial del Terminal",
+    termCompTrading: "Competiciones Globales de Trading",
+    termCompCrypto: "Torneos Crypto",
+    termWeb3: "Inteligencia Web3 y Crypto",
+    heroCtaTerminal: "Únete a TU Sala de Trading"
+  },
+  de: {
+    compTitleTrading: "Pro-Trading-Wettbewerbe",
+    compTitleCrypto: "Krypto- & Web3-Wettbewerbe",
+    compSearch: "Wettbewerbe suchen",
+    compSearching: "Suche läuft...",
+    compJoin: "Teilnehmen / Info",
+    compHybrid: "Hybrid (Trad/Krypto)",
+    compPrize: "Preis",
+    compEntry: "Eintritt",
+    compDate: "Datum",
+    tjNewPbPrompt: "Name der neuen Methode (Playbook):",
+    tjNewAccPrompt: "Name des neuen Kontos:",
+    tjRenAccPrompt: "Konto umbenennen:",
+    tjDelAccPrompt: "Dieses Konto und alle seine Trades löschen?",
+    tjCompPerf: "Leistungsvergleich",
+    termTour: "Terminal-Tutorial",
+    termCompTrading: "Globale Trading-Wettbewerbe",
+    termCompCrypto: "Krypto-Turniere",
+    termWeb3: "Web3 & Krypto-Intelligenz",
+    heroCtaTerminal: "Tritt DEINEM Trading-Raum bei"
+  },
+  ru: {
+    compTitleTrading: "Турниры Pro Trading",
+    compTitleCrypto: "Турниры Crypto & Web3",
+    compSearch: "Поиск турниров",
+    compSearching: "Поиск...",
+    compJoin: "Участвовать / Инфо",
+    compHybrid: "Гибрид (Трад/Крипто)",
+    compPrize: "Приз",
+    compEntry: "Вход",
+    compDate: "Дата",
+    tjNewPbPrompt: "Название нового метода (Playbook):",
+    tjNewAccPrompt: "Название нового счета:",
+    tjRenAccPrompt: "Переименовать счет:",
+    tjDelAccPrompt: "Удалить этот счет и все его сделки?",
+    tjCompPerf: "Сравнение производительности",
+    termTour: "Учебник по Терминалу",
+    termCompTrading: "Глобальные Торговые Турниры",
+    termCompCrypto: "Крипто Турниры",
+    termWeb3: "Web3 & Крипто Интеллект",
+    heroCtaTerminal: "Присоединяйтесь к ТВОЕМУ торговому залу"
+  },
+  ja: {
+    compTitleTrading: "プロトレーディングコンペティション",
+    compTitleCrypto: "暗号通貨＆Web3コンペティション",
+    compSearch: "コンペティションを検索",
+    compSearching: "検索中...",
+    compJoin: "参加する / 情報",
+    compHybrid: "ハイブリッド (伝統/暗号)",
+    compPrize: "賞",
+    compEntry: "参加",
+    compDate: "日付",
+    tjNewPbPrompt: "新しいメソッド（Playbook）の名前:",
+    tjNewAccPrompt: "新しい口座の名前:",
+    tjRenAccPrompt: "口座の名前を変更:",
+    tjDelAccPrompt: "この口座とすべてのトレードを削除しますか？",
+    tjCompPerf: "パフォーマンス比較",
+    termTour: "ターミナルチュートリアル",
+    termCompTrading: "グローバルトレーディングコンペティション",
+    termCompCrypto: "暗号通貨トーナメント",
+    termWeb3: "Web3 ＆ 暗号通貨インテリジェンス",
+    heroCtaTerminal: "あなたのトレーディングルームに参加"
+  }
+};
+
+for (const lang in newTranslations) {
+  const transKeys = Object.entries(newTranslations[lang]).map(([k, v]) => `${k}: "${v}"`).join(', ');
+  // Insert before 'termPulse' in each language object. 
+  // Wait, it's safer to just inject at the beginning of each language object.
+  const langRegex = new RegExp(`(${lang}: \\{)`);
+  if (i18nContent.match(langRegex)) {
+    i18nContent = i18nContent.replace(langRegex, `$1\n    ${transKeys},`);
+  }
 }
-fs.writeFileSync(file, code);
-console.log("Done");
+
+fs.writeFileSync(i18nPath, i18nContent);
+console.log('Updated i18n/index.ts with new keys.');
