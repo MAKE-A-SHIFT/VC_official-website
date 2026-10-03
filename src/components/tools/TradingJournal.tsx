@@ -1,25 +1,12 @@
 "use client";
 import React, { useState, useEffect, useMemo } from "react";
 import { AreaChart, Area, RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Cell } from "recharts";
-import { useAppStore } from "@/store/useAppStore";
+import { useAppStore, Trade } from "@/store/useAppStore";
 import { translations } from "@/i18n";
 import { Crosshair, AlertCircle, BookOpen, TrendingUp, Filter, Activity, Plus, X, Calendar, ArrowRight, Tag, Trash2, LayoutDashboard, Target, HelpCircle } from "lucide-react";
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
 
-// --- TYPES ---
-interface Trade {
-  id: string;
-  date: string;
-  asset: string;
-  direction: "LONG" | "SHORT";
-  pnl: number;
-  playbook: string;
-  mistakes: string[];
-  mfe: number; // en $
-  mae: number; // en $ (valeur absolue ou nAcgative)
-  account: string;
-}
 
 // --- CONSTANTES ---
 const AVAILABLE_MISTAKES = ["FOMO", "Revenge Trading", "Overleveraged", "Hesitation", "Moved Stop Loss", "Traded outside Killzone"];
@@ -98,10 +85,7 @@ export function TradingJournal() {
   // --- ÉTATS ---
   const [isMounted, setIsMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<'DASHBOARD' | 'LOGBOOK' | 'PLAYBOOKS' | 'REPORTS'>('DASHBOARD');
-  const [activeAccount, setActiveAccount] = useState<string>('ALL');
-  
-  // Trades State (avec LocalStorage pour la persistance)
-  const [trades, setTrades] = useState<Trade[]>([]);
+  const { trades, setTrades, activeAccount, setActiveAccount } = useAppStore();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   // Formulaire d'ajout
@@ -145,6 +129,8 @@ export function TradingJournal() {
     return activeAccount === 'ALL' ? trades : trades.filter(t => t.account === activeAccount);
   }, [trades, activeAccount]);
 
+  
+  // Stats Account Specifique
   const stats = useMemo(() => {
     const totalPnL = filteredTrades.reduce((sum, t) => sum + t.pnl, 0);
     const wins = filteredTrades.filter(t => t.pnl > 0);
@@ -154,15 +140,17 @@ export function TradingJournal() {
     const grossProfit = wins.reduce((sum, t) => sum + t.pnl, 0);
     const grossLoss = Math.abs(losses.reduce((sum, t) => sum + t.pnl, 0));
     const profitFactor = grossLoss === 0 ? (grossProfit > 0 ? 99 : 0) : (grossProfit / grossLoss);
+    
+    const avgWin = wins.length ? grossProfit / wins.length : 0;
+    const avgLoss = losses.length ? grossLoss / losses.length : 0;
+    const edge = (winRate/100 * avgWin) - ((1 - winRate/100) * avgLoss);
 
-    // XP Curve Data
     let cumulative = 0;
     const xpData = [...filteredTrades].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()).map(t => {
       cumulative += t.pnl;
       return { date: t.date, pnl: cumulative };
     });
 
-    // Mistakes Cost
     const mistakesCost: Record<string, number> = {};
     losses.forEach(t => {
       t.mistakes.forEach(m => {
@@ -171,7 +159,6 @@ export function TradingJournal() {
     });
     const mistakesData = Object.keys(mistakesCost).map(k => ({ name: k, lost: mistakesCost[k] })).sort((a, b) => b.lost - a.lost);
 
-    // Playbook Stats
     const playbooks: Record<string, { wins: number, total: number, pnl: number }> = {};
     filteredTrades.forEach(t => {
       if (!playbooks[t.playbook]) playbooks[t.playbook] = { wins: 0, total: 0, pnl: 0 };
@@ -180,8 +167,24 @@ export function TradingJournal() {
       playbooks[t.playbook].pnl += t.pnl;
     });
 
-    return { totalPnL, winRate, profitFactor, xpData, mistakesData, playbooks, winCount: wins.length, lossCount: losses.length };
+    return { totalPnL, winRate, profitFactor, edge, xpData, mistakesData, playbooks, winCount: wins.length, lossCount: losses.length };
   }, [filteredTrades]);
+
+  // Stats Globales (GENERAL)
+  const generalStats = useMemo(() => {
+    const totalPnL = trades.reduce((sum, t) => sum + t.pnl, 0);
+    const wins = trades.filter(t => t.pnl > 0);
+    const losses = trades.filter(t => t.pnl < 0);
+    const winRate = trades.length ? (wins.length / trades.length) * 100 : 0;
+    const grossProfit = wins.reduce((sum, t) => sum + t.pnl, 0);
+    const grossLoss = Math.abs(losses.reduce((sum, t) => sum + t.pnl, 0));
+    const profitFactor = grossLoss === 0 ? (grossProfit > 0 ? 99 : 0) : (grossProfit / grossLoss);
+    const avgWin = wins.length ? grossProfit / wins.length : 0;
+    const avgLoss = losses.length ? grossLoss / losses.length : 0;
+    const edge = (winRate/100 * avgWin) - ((1 - winRate/100) * avgLoss);
+    return { totalPnL, winRate, profitFactor, edge, winCount: wins.length, lossCount: losses.length };
+  }, [trades]);
+  
 
   // --- ACTIONS ---
   const handleAddTrade = (e: React.FormEvent) => {
@@ -222,39 +225,84 @@ export function TradingJournal() {
   // RENDERS
   // -------------------------------------------------------------
 
+  
   const renderDashboard = () => (
     <div className="space-y-8 animate-in fade-in duration-500">
-      {/* KPIs Minimalistes type Tradezella */}
-      <div id="tour-kpis" className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-[#111113] border border-white/5 rounded-2xl p-6 flex flex-col justify-between h-32">
-          <p className="text-xs text-zinc-500 font-bold tracking-widest uppercase">Net PnL</p>
-          <p className={`text-3xl font-black tracking-tighter ${stats.totalPnL >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-            {stats.totalPnL >= 0 ? '+' : ''}${stats.totalPnL.toLocaleString()}
-          </p>
-        </div>
-        <div className="bg-[#111113] border border-white/5 rounded-2xl p-6 flex flex-col justify-between h-32">
-          <p className="text-xs text-zinc-500 font-bold tracking-widest uppercase">Win Rate</p>
-          <div className="flex items-end gap-2">
-            <p className="text-3xl font-black text-white tracking-tighter">{stats.winRate.toFixed(1)}%</p>
-            <p className="text-sm text-zinc-500 mb-1">{stats.winCount}W - {stats.lossCount}L</p>
+      
+      {/* Jumeaux: GENERAL vs SELECTED ACCOUNT */}
+      <div className="flex items-center gap-4 mb-2">
+        <h3 className="font-bold text-white text-lg">Comparaison des Performances</h3>
+      </div>
+      
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+        
+        {/* DASHBOARD GENERAL */}
+        <div className="bg-[#111113]/50 border border-white/5 rounded-2xl p-6 relative">
+          <div className="absolute -top-3 right-4 bg-zinc-800 text-white text-[10px] font-bold px-2 py-1 rounded">GENERAL (Tous les comptes)</div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-[#09090b] border border-white/5 rounded-xl p-4 flex flex-col justify-between">
+              <p className="text-[10px] text-zinc-500 font-bold tracking-widest uppercase">Net PnL</p>
+              <p className={`text-2xl font-black tracking-tighter ${generalStats.totalPnL >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                {generalStats.totalPnL >= 0 ? '+' : ''}${generalStats.totalPnL.toLocaleString()}
+              </p>
+            </div>
+            <div className="bg-[#09090b] border border-white/5 rounded-xl p-4 flex flex-col justify-between">
+              <p className="text-[10px] text-zinc-500 font-bold tracking-widest uppercase">Win Rate</p>
+              <div className="flex items-end gap-2">
+                <p className="text-2xl font-black text-white tracking-tighter">{generalStats.winRate.toFixed(1)}%</p>
+                <p className="text-[10px] text-zinc-500 mb-1">{generalStats.winCount}W - {generalStats.lossCount}L</p>
+              </div>
+            </div>
+            <div className="bg-[#09090b] border border-white/5 rounded-xl p-4 flex flex-col justify-between">
+              <p className="text-[10px] text-zinc-500 font-bold tracking-widest uppercase">Profit Factor</p>
+              <p className="text-2xl font-black text-white tracking-tighter">{generalStats.profitFactor.toFixed(2)}</p>
+            </div>
+            <div className="bg-blue-900/10 border border-blue-500/20 rounded-xl p-4 flex flex-col justify-between relative overflow-hidden">
+              <div className="absolute -right-4 -top-4 w-16 h-16 bg-blue-500/20 blur-2xl rounded-full"></div>
+              <p className="text-[10px] text-blue-300/50 font-bold tracking-widest uppercase">Trading Edge</p>
+              <p className={`text-xl font-black ${generalStats.edge >= 0 ? 'text-blue-400' : 'text-red-400'}`}>
+                {generalStats.edge >= 0 ? '+' : ''}${generalStats.edge.toFixed(2)}/trade
+              </p>
+            </div>
           </div>
         </div>
-        <div className="bg-[#111113] border border-white/5 rounded-2xl p-6 flex flex-col justify-between h-32">
-          <p className="text-xs text-zinc-500 font-bold tracking-widest uppercase">Profit Factor</p>
-          <p className="text-3xl font-black text-white tracking-tighter">{stats.profitFactor.toFixed(2)}</p>
+
+        {/* DASHBOARD SELECTED ACCOUNT */}
+        <div className="bg-[#111113] border border-white/10 rounded-2xl p-6 relative shadow-[0_0_20px_rgba(139,92,246,0.05)]">
+          <div className="absolute -top-3 right-4 bg-violet-600 text-white text-[10px] font-bold px-2 py-1 rounded">{activeAccount === 'ALL' ? 'TOUS' : activeAccount.replace('_', ' ')}</div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-[#09090b] border border-white/5 rounded-xl p-4 flex flex-col justify-between">
+              <p className="text-[10px] text-zinc-500 font-bold tracking-widest uppercase">Net PnL</p>
+              <p className={`text-2xl font-black tracking-tighter ${stats.totalPnL >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                {stats.totalPnL >= 0 ? '+' : ''}${stats.totalPnL.toLocaleString()}
+              </p>
+            </div>
+            <div className="bg-[#09090b] border border-white/5 rounded-xl p-4 flex flex-col justify-between">
+              <p className="text-[10px] text-zinc-500 font-bold tracking-widest uppercase">Win Rate</p>
+              <div className="flex items-end gap-2">
+                <p className="text-2xl font-black text-white tracking-tighter">{stats.winRate.toFixed(1)}%</p>
+                <p className="text-[10px] text-zinc-500 mb-1">{stats.winCount}W - {stats.lossCount}L</p>
+              </div>
+            </div>
+            <div className="bg-[#09090b] border border-white/5 rounded-xl p-4 flex flex-col justify-between">
+              <p className="text-[10px] text-zinc-500 font-bold tracking-widest uppercase">Profit Factor</p>
+              <p className="text-2xl font-black text-white tracking-tighter">{stats.profitFactor.toFixed(2)}</p>
+            </div>
+            <div className="bg-violet-900/10 border border-violet-500/20 rounded-xl p-4 flex flex-col justify-between relative overflow-hidden">
+              <div className="absolute -right-4 -top-4 w-16 h-16 bg-violet-500/20 blur-2xl rounded-full"></div>
+              <p className="text-[10px] text-violet-300/50 font-bold tracking-widest uppercase">Trading Edge</p>
+              <p className={`text-xl font-black ${stats.edge >= 0 ? 'text-violet-400' : 'text-red-400'}`}>
+                {stats.edge >= 0 ? '+' : ''}${stats.edge.toFixed(2)}/trade
+              </p>
+            </div>
+          </div>
         </div>
-        <div className="bg-violet-900/10 border border-violet-500/20 rounded-2xl p-6 flex flex-col justify-between h-32 relative overflow-hidden">
-          <div className="absolute -right-4 -top-4 w-24 h-24 bg-violet-500/20 blur-2xl rounded-full"></div>
-          <p className="text-xs text-violet-300/50 font-bold tracking-widest uppercase">Trading Edge</p>
-          <p className="text-2xl font-black text-violet-400">
-            {stats.profitFactor > 2 ? 'Elite' : stats.profitFactor > 1.2 ? 'Profitable' : 'Needs Work'}
-          </p>
-        </div>
+
       </div>
 
       {/* Charts: Equity Curve & Radar */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <div className="xl:col-span-2 bg-[#111113] border border-white/5 rounded-2xl p-6">
+        <div id="tour-xp-curve" className="xl:col-span-2 bg-[#111113] border border-white/5 rounded-2xl p-6">
           <div className="flex justify-between items-center mb-8">
             <h4 className="text-sm font-bold text-white flex items-center gap-2">
               <TrendingUp className="w-4 h-4 text-zinc-400" /> Equity Curve
@@ -271,7 +319,7 @@ export function TradingJournal() {
                     </linearGradient>
                   </defs>
                   <XAxis dataKey="date" stroke="#3f3f46" fontSize={10} tickMargin={10} minTickGap={30} />
-                  <YAxis stroke="#3f3f46" fontSize={10} tickFormatter={(val) => `$${val}`} />
+                  <YAxis stroke="#3f3f46" fontSize={10} tickFormatter={(val) => `${val}`} />
                   <Tooltip 
                     contentStyle={{ backgroundColor: '#09090b', borderColor: '#27272a', borderRadius: '12px' }}
                     itemStyle={{ color: '#22c55e', fontWeight: 'bold' }}
@@ -280,23 +328,23 @@ export function TradingJournal() {
                 </AreaChart>
               </ResponsiveContainer>
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-zinc-600 text-sm">Pas assez de donnAces.</div>
+              <div className="w-full h-full flex items-center justify-center text-zinc-600 text-sm">Pas assez de données.</div>
             )}
           </div>
         </div>
 
         <div id="tour-rpg-stats" className="bg-[#111113] border border-white/5 rounded-2xl p-6">
           <h4 className="text-sm font-bold text-white mb-6 flex items-center gap-2">
-            <Activity className="w-4 h-4 text-zinc-400" /> RPG Stats
+            <Activity className="w-4 h-4 text-zinc-400" /> Your Traders Stats
           </h4>
           <div className="h-[250px] w-full mt-4">
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart cx="50%" cy="50%" outerRadius="65%" data={[
-                { subject: "Risk", A: stats.lossCount > 0 ? 80 : 100 },
-                { subject: "Discipline", A: stats.mistakesData.length > 0 ? 60 : 95 },
-                { subject: "Playbook", A: 85 },
-                { subject: "Execution", A: 90 },
-                { subject: "Win Rate", A: stats.winRate },
+                { subject: "Psychologie", A: stats.mistakesData.some(m => m.name === "FOMO" || m.name === "Revenge Trading") ? 50 : 90 },
+                { subject: "Risk Mgmt", A: stats.mistakesData.some(m => m.name === "Overleveraged") ? 40 : 100 },
+                { subject: "Patience", A: stats.mistakesData.some(m => m.name === "Hesitation") ? 60 : 85 },
+                { subject: "Exécution", A: 90 },
+                { subject: "Analyse", A: stats.winRate },
               ]}>
                 <PolarGrid stroke="#27272a" />
                 <PolarAngleAxis dataKey="subject" tick={{ fill: '#71717a', fontSize: 10 }} />
@@ -308,6 +356,7 @@ export function TradingJournal() {
       </div>
     </div>
   );
+
 
   const renderLogbook = () => (
     <div className="space-y-6 animate-in fade-in duration-500">

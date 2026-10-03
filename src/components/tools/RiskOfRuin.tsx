@@ -1,16 +1,37 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Skull } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
 import { translations } from "@/i18n";
 
 export function RiskOfRuin() {
-  const { language } = useAppStore();
+  const { language, trades, activeAccount } = useAppStore();
   const t = translations[language].terminal;
 
   const [winRate, setWinRate] = useState<number>(40);
   const [rr, setRr] = useState<number>(1.5);
   
+  // Synchronisation avec le journal
+  useEffect(() => {
+    if (activeAccount !== 'ALL') {
+      const accountTrades = trades.filter(t => t.account === activeAccount);
+      if (accountTrades.length > 0) {
+        const wins = accountTrades.filter(t => t.pnl > 0);
+        const losses = accountTrades.filter(t => t.pnl < 0);
+        
+        const currentWinRate = (wins.length / accountTrades.length) * 100;
+        setWinRate(Number(currentWinRate.toFixed(1)));
+        
+        if (wins.length > 0 && losses.length > 0) {
+          const avgWin = wins.reduce((acc, tr) => acc + tr.pnl, 0) / wins.length;
+          const avgLoss = Math.abs(losses.reduce((acc, tr) => acc + tr.pnl, 0) / losses.length);
+          const currentRR = avgWin / (avgLoss || 1);
+          setRr(Number(currentRR.toFixed(2)));
+        }
+      }
+    }
+  }, [activeAccount, trades]);
+
   const expectancy = (winRate / 100) * rr - ((100 - winRate) / 100) * 1;
   const isRetailTrap = expectancy <= 0;
 
@@ -23,6 +44,11 @@ export function RiskOfRuin() {
           <Skull className={`w-5 h-5 ${isRetailTrap ? 'text-red-500' : 'text-zinc-500'}`} />
           <h3 className="text-xl font-bold tracking-tight">{t.riskTitle}</h3>
         </div>
+        {activeAccount !== 'ALL' && (
+          <span className="text-[9px] bg-red-500/20 text-red-400 px-2 py-1 rounded border border-red-500/30 uppercase font-bold">
+            Sync: {activeAccount.replace('_', ' ')}
+          </span>
+        )}
       </div>
 
       <div className="grid grid-cols-2 gap-4 mb-6">

@@ -1,24 +1,44 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Sigma, Plus, Trash2 } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
 import { translations } from "@/i18n";
 
-type Trade = { id: number; result: "win" | "loss"; rr: number };
+type EdgeTrade = { id: number | string; result: "win" | "loss"; rr: number; isImported?: boolean };
 
 export function EdgeCalculator() {
-  const { language } = useAppStore();
+  const { language, trades: globalTrades, activeAccount } = useAppStore();
   const t = translations[language].terminal;
 
-  const [trades, setTrades] = useState<Trade[]>([]);
+  const [trades, setTrades] = useState<EdgeTrade[]>([]);
   const [nextRR, setNextRR] = useState<number>(2);
   const [nextResult, setNextResult] = useState<"win" | "loss">("win");
+
+  // Synchronisation avec le journal de trading
+  useEffect(() => {
+    if (activeAccount !== 'ALL') {
+      const accountTrades = globalTrades.filter(t => t.account === activeAccount);
+      if (accountTrades.length === 0) return;
+
+      const losses = accountTrades.filter(t => t.pnl < 0);
+      const avgLoss = losses.length > 0 ? Math.abs(losses.reduce((acc, tr) => acc + tr.pnl, 0) / losses.length) : 1;
+
+      const syncedTrades: EdgeTrade[] = accountTrades.map(tr => ({
+        id: tr.id,
+        result: tr.pnl > 0 ? "win" : "loss",
+        rr: tr.pnl > 0 ? Number((tr.pnl / (avgLoss || 1)).toFixed(2)) : 1,
+        isImported: true
+      }));
+
+      setTrades(syncedTrades);
+    }
+  }, [activeAccount, globalTrades]);
 
   const addTrade = () => {
     setTrades([...trades, { id: Date.now(), result: nextResult, rr: nextResult === "win" ? nextRR : 1 }]);
   };
 
-  const removeTrade = (id: number) => setTrades(trades.filter(tr => tr.id !== id));
+  const removeTrade = (id: number | string) => setTrades(trades.filter(tr => tr.id !== id));
 
   const wins = trades.filter(tr => tr.result === "win").length;
   const losses = trades.filter(tr => tr.result === "loss").length;
@@ -29,12 +49,19 @@ export function EdgeCalculator() {
   const expectancy = trades.length > 0 ? (totalRRGained - totalRRLost) / trades.length : 0;
 
   return (
-    <div className="glass-panel p-6 rounded-2xl w-full border border-white/5 relative overflow-hidden">
+    <div className="glass-panel p-6 rounded-2xl w-full border border-white/5 relative overflow-hidden flex flex-col justify-between">
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-600 to-white/20"></div>
       
-      <div className="flex items-center gap-3 mb-6">
-        <Sigma className="w-5 h-5 text-emerald-400" />
-        <h3 className="text-xl font-bold tracking-tight">{t.edgeTitle}</h3>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <Sigma className="w-5 h-5 text-emerald-400" />
+          <h3 className="text-xl font-bold tracking-tight">{t.edgeTitle}</h3>
+        </div>
+        {activeAccount !== 'ALL' && (
+          <span className="text-[9px] bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded border border-emerald-500/30 uppercase font-bold">
+            Sync: {activeAccount.replace('_', ' ')}
+          </span>
+        )}
       </div>
 
       <div className="flex gap-2 mb-6">
@@ -82,6 +109,7 @@ export function EdgeCalculator() {
               <div className="flex items-center gap-2">
                 <span className={`w-2 h-2 rounded-full ${trade.result === "win" ? "bg-emerald-500" : "bg-red-500"}`}></span>
                 <span className="uppercase text-white/70">{trade.result === "win" ? "WIN" : "LOSS"}</span>
+                {trade.isImported && <span className="text-[9px] text-zinc-500">(Journal)</span>}
               </div>
               <div className="flex items-center gap-4">
                 <span className="font-mono">{trade.result === "win" ? `+${trade.rr}R` : `-1R`}</span>
