@@ -11,7 +11,8 @@ import { RecoveryCalculator } from "../tools/RecoveryCalculator";
 import { MarketSessions } from "../tools/MarketSessions";
 import { MarketHeatmap } from "../tools/MarketHeatmap";
 import { CryptoAIScanner } from "../tools/CryptoAIScanner";
-import { CompetitionsRadar } from "../tools/CompetitionsRadar";
+import { Competitions } from "../tools/Competitions";
+
 import { Trophy } from "lucide-react";
 import { Activity, ShieldAlert, Target, BookOpen, BrainCircuit, HelpCircle } from "lucide-react";
 import { driver } from "driver.js";
@@ -78,7 +79,7 @@ export function TerminalView() {
     <div className="max-w-[1600px] mx-auto p-4 md:p-6 animate-in fade-in zoom-in-95 duration-500 mt-24">
       
       {/* HEADER & TOUR BUTTON */}
-      <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-4" id="tour-terminal-tabs">
+      <div className="flex relative justify-center items-center mb-8 border-b border-white/5 pb-4" id="tour-terminal-tabs">
         <div className="flex items-center gap-8">
           <button
             onClick={() => setActiveTab('TRADING')}
@@ -164,7 +165,7 @@ export function TerminalView() {
                  <Trophy className="w-4 h-4"/> Global Trading Competitions
               </h2>
               <div className="mb-16">
-                <CompetitionsRadar category="TRADING" />
+                <Competitions type="TRADING" />
               </div>
             </section>
 
@@ -184,10 +185,21 @@ export function TerminalView() {
                  <Trophy className="w-4 h-4"/> Crypto Tournaments
               </h2>
               <div>
-                <CompetitionsRadar category="CRYPTO" />
+                <Competitions type="CRYPTO" />
+              </div>
+            </section>
+
+            {/* SECTION: COMPETITIONS */}
+            <section className="animate-in fade-in duration-500 delay-200">
+              <h2 className="text-white/30 font-bold tracking-widest text-xs mb-6 uppercase flex items-center gap-2">
+                 <Trophy className="w-4 h-4"/> Tournaments & Proving Grounds
+              </h2>
+              <div className="grid grid-cols-1 gap-6">
+                <Competitions type="TRADING" />
               </div>
             </section>
           </>
+
         )}
 
         {activeTab === 'CRYPTO' && (
@@ -201,7 +213,18 @@ export function TerminalView() {
                 <CryptoAIScanner />
               </div>
             </section>
+
+            {/* SECTION: COMPETITIONS CRYPTO */}
+            <section className="animate-in fade-in duration-500 delay-100 mt-16">
+              <h2 className="text-white/30 font-bold tracking-widest text-xs mb-6 uppercase flex items-center gap-2">
+                 <Trophy className="w-4 h-4"/> Crypto Tournaments
+              </h2>
+              <div className="grid grid-cols-1 gap-6">
+                <Competitions type="CRYPTO" />
+              </div>
+            </section>
           </>
+
         )}
 
       </div>

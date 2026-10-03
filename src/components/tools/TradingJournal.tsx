@@ -10,8 +10,6 @@ import "driver.js/dist/driver.css";
 
 // --- CONSTANTES ---
 const AVAILABLE_MISTAKES = ["FOMO", "Revenge Trading", "Overleveraged", "Hesitation", "Moved Stop Loss", "Traded outside Killzone"];
-const AVAILABLE_ACCOUNTS = ["FUNDED_1", "CHALLENGE", "PERSONAL"];
-const DEFAULT_PLAYBOOKS = ["Silver Bullet", "London Breakout", "FVG Retracement", "Trend Continuation"];
 
 export function TradingJournal() {
   const { language } = useAppStore();
@@ -85,8 +83,8 @@ export function TradingJournal() {
   // --- ÉTATS ---
   const [isMounted, setIsMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<'DASHBOARD' | 'LOGBOOK' | 'PLAYBOOKS' | 'REPORTS'>('DASHBOARD');
-  const { trades, setTrades, activeAccount, setActiveAccount } = useAppStore();
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const { trades, setTrades, activeAccount, setActiveAccount, accounts, addAccount, removeAccount, playbooks, addPlaybook, removePlaybook } = useAppStore();
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false); const [dashLeftFilter, setDashLeftFilter] = useState("ALL"); const [dashRightFilter, setDashRightFilter] = useState("ALL"); useEffect(() => { setDashRightFilter(activeAccount === "ALL" ? "ALL" : "ACC_" + activeAccount); }, [activeAccount]); const handleNewPlaybook = () => { const name = window.prompt("Nom de la nouvelle m�thode (Playbook) :"); if (name && name.trim()) { addPlaybook(name.trim()); } }; const handleNewAccount = () => { const name = window.prompt("Nom du nouveau compte :"); if (name && name.trim()) { addAccount(name.trim()); } };
 
   // Formulaire d'ajout
   const [formData, setFormData] = useState<Partial<Trade>>({
@@ -171,19 +169,34 @@ export function TradingJournal() {
   }, [filteredTrades]);
 
   // Stats Globales (GENERAL)
-  const generalStats = useMemo(() => {
-    const totalPnL = trades.reduce((sum, t) => sum + t.pnl, 0);
-    const wins = trades.filter(t => t.pnl > 0);
-    const losses = trades.filter(t => t.pnl < 0);
-    const winRate = trades.length ? (wins.length / trades.length) * 100 : 0;
+  
+  const calculateDashboardStats = (filter: string) => {
+    let targetTrades = trades;
+    if (filter !== "ALL") {
+      if (filter.startsWith("ACC_")) {
+        const acc = filter.replace("ACC_", "");
+        targetTrades = trades.filter(t => t.account === acc);
+      } else if (filter.startsWith("PB_")) {
+        const pb = filter.replace("PB_", "");
+        targetTrades = trades.filter(t => t.playbook === pb);
+      }
+    }
+    const totalPnL = targetTrades.reduce((sum, t) => sum + t.pnl, 0);
+    const wins = targetTrades.filter(t => t.pnl > 0);
+    const losses = targetTrades.filter(t => t.pnl < 0);
+    const winRate = targetTrades.length ? (wins.length / targetTrades.length) * 100 : 0;
     const grossProfit = wins.reduce((sum, t) => sum + t.pnl, 0);
     const grossLoss = Math.abs(losses.reduce((sum, t) => sum + t.pnl, 0));
     const profitFactor = grossLoss === 0 ? (grossProfit > 0 ? 99 : 0) : (grossProfit / grossLoss);
     const avgWin = wins.length ? grossProfit / wins.length : 0;
     const avgLoss = losses.length ? grossLoss / losses.length : 0;
     const edge = (winRate/100 * avgWin) - ((1 - winRate/100) * avgLoss);
-    return { totalPnL, winRate, profitFactor, edge, winCount: wins.length, lossCount: losses.length };
-  }, [trades]);
+    return { totalPnL, winRate, profitFactor, edge, winCount: wins.length, lossCount: losses.length, targetTrades };
+  };
+
+  const leftStats = useMemo(() => calculateDashboardStats(dashLeftFilter), [trades, dashLeftFilter]);
+  const rightStats = useMemo(() => calculateDashboardStats(dashRightFilter), [trades, dashRightFilter]);
+  
   
 
   // --- ACTIONS ---
@@ -238,30 +251,40 @@ export function TradingJournal() {
         
         {/* DASHBOARD GENERAL */}
         <div className="bg-[#111113]/50 border border-white/5 rounded-2xl p-6 relative">
-          <div className="absolute -top-3 right-4 bg-zinc-800 text-white text-[10px] font-bold px-2 py-1 rounded">GENERAL (Tous les comptes)</div>
+          
+  <select value={dashLeftFilter} onChange={e => setDashLeftFilter(e.target.value)} className="absolute -top-3 right-4 bg-zinc-800 text-white text-[10px] font-bold px-2 py-1 rounded outline-none cursor-pointer">
+    <option value="ALL">GENERAL (ALL)</option>
+    <optgroup label="Comptes">
+      {accounts.map(acc => <option key={acc} value={"ACC_"+acc}>COMPTE: {acc}</option>)}
+    </optgroup>
+    <optgroup label="Méthodes">
+      {playbooks.map(pb => <option key={pb} value={"PB_"+pb}>METHODE: {pb}</option>)}
+    </optgroup>
+  </select>
+
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-[#09090b] border border-white/5 rounded-xl p-4 flex flex-col justify-between">
               <p className="text-[10px] text-zinc-500 font-bold tracking-widest uppercase">Net PnL</p>
-              <p className={`text-2xl font-black tracking-tighter ${generalStats.totalPnL >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                {generalStats.totalPnL >= 0 ? '+' : ''}${generalStats.totalPnL.toLocaleString()}
+              <p className={`text-2xl font-black tracking-tighter ${leftStats.totalPnL >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                {leftStats.totalPnL >= 0 ? '+' : ''}${leftStats.totalPnL.toLocaleString()}
               </p>
             </div>
             <div className="bg-[#09090b] border border-white/5 rounded-xl p-4 flex flex-col justify-between">
               <p className="text-[10px] text-zinc-500 font-bold tracking-widest uppercase">Win Rate</p>
               <div className="flex items-end gap-2">
-                <p className="text-2xl font-black text-white tracking-tighter">{generalStats.winRate.toFixed(1)}%</p>
-                <p className="text-[10px] text-zinc-500 mb-1">{generalStats.winCount}W - {generalStats.lossCount}L</p>
+                <p className="text-2xl font-black text-white tracking-tighter">{leftStats.winRate.toFixed(1)}%</p>
+                <p className="text-[10px] text-zinc-500 mb-1">{leftStats.winCount}W - {leftStats.lossCount}L</p>
               </div>
             </div>
             <div className="bg-[#09090b] border border-white/5 rounded-xl p-4 flex flex-col justify-between">
               <p className="text-[10px] text-zinc-500 font-bold tracking-widest uppercase">Profit Factor</p>
-              <p className="text-2xl font-black text-white tracking-tighter">{generalStats.profitFactor.toFixed(2)}</p>
+              <p className="text-2xl font-black text-white tracking-tighter">{leftStats.profitFactor.toFixed(2)}</p>
             </div>
             <div className="bg-blue-900/10 border border-blue-500/20 rounded-xl p-4 flex flex-col justify-between relative overflow-hidden">
               <div className="absolute -right-4 -top-4 w-16 h-16 bg-blue-500/20 blur-2xl rounded-full"></div>
               <p className="text-[10px] text-blue-300/50 font-bold tracking-widest uppercase">Trading Edge</p>
-              <p className={`text-xl font-black ${generalStats.edge >= 0 ? 'text-blue-400' : 'text-red-400'}`}>
-                {generalStats.edge >= 0 ? '+' : ''}${generalStats.edge.toFixed(2)}/trade
+              <p className={`text-xl font-black ${leftStats.edge >= 0 ? 'text-blue-400' : 'text-red-400'}`}>
+                {leftStats.edge >= 0 ? '+' : ''}${leftStats.edge.toFixed(2)}/trade
               </p>
             </div>
           </div>
@@ -269,30 +292,40 @@ export function TradingJournal() {
 
         {/* DASHBOARD SELECTED ACCOUNT */}
         <div className="bg-[#111113] border border-white/10 rounded-2xl p-6 relative shadow-[0_0_20px_rgba(139,92,246,0.05)]">
-          <div className="absolute -top-3 right-4 bg-violet-600 text-white text-[10px] font-bold px-2 py-1 rounded">{activeAccount === 'ALL' ? 'TOUS' : activeAccount.replace('_', ' ')}</div>
+          
+  <select value={dashRightFilter} onChange={e => setDashRightFilter(e.target.value)} className="absolute -top-3 right-4 bg-violet-600 text-white text-[10px] font-bold px-2 py-1 rounded outline-none cursor-pointer">
+    <option value="ALL">GENERAL (ALL)</option>
+    <optgroup label="Comptes">
+      {accounts.map(acc => <option key={acc} value={"ACC_"+acc}>COMPTE: {acc}</option>)}
+    </optgroup>
+    <optgroup label="Méthodes">
+      {playbooks.map(pb => <option key={pb} value={"PB_"+pb}>METHODE: {pb}</option>)}
+    </optgroup>
+  </select>
+
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-[#09090b] border border-white/5 rounded-xl p-4 flex flex-col justify-between">
               <p className="text-[10px] text-zinc-500 font-bold tracking-widest uppercase">Net PnL</p>
-              <p className={`text-2xl font-black tracking-tighter ${stats.totalPnL >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                {stats.totalPnL >= 0 ? '+' : ''}${stats.totalPnL.toLocaleString()}
+              <p className={`text-2xl font-black tracking-tighter ${rightStats.totalPnL >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                {rightStats.totalPnL >= 0 ? '+' : ''}${rightStats.totalPnL.toLocaleString()}
               </p>
             </div>
             <div className="bg-[#09090b] border border-white/5 rounded-xl p-4 flex flex-col justify-between">
               <p className="text-[10px] text-zinc-500 font-bold tracking-widest uppercase">Win Rate</p>
               <div className="flex items-end gap-2">
-                <p className="text-2xl font-black text-white tracking-tighter">{stats.winRate.toFixed(1)}%</p>
-                <p className="text-[10px] text-zinc-500 mb-1">{stats.winCount}W - {stats.lossCount}L</p>
+                <p className="text-2xl font-black text-white tracking-tighter">{rightStats.winRate.toFixed(1)}%</p>
+                <p className="text-[10px] text-zinc-500 mb-1">{rightStats.winCount}W - {rightStats.lossCount}L</p>
               </div>
             </div>
             <div className="bg-[#09090b] border border-white/5 rounded-xl p-4 flex flex-col justify-between">
               <p className="text-[10px] text-zinc-500 font-bold tracking-widest uppercase">Profit Factor</p>
-              <p className="text-2xl font-black text-white tracking-tighter">{stats.profitFactor.toFixed(2)}</p>
+              <p className="text-2xl font-black text-white tracking-tighter">{rightStats.profitFactor.toFixed(2)}</p>
             </div>
             <div className="bg-violet-900/10 border border-violet-500/20 rounded-xl p-4 flex flex-col justify-between relative overflow-hidden">
               <div className="absolute -right-4 -top-4 w-16 h-16 bg-violet-500/20 blur-2xl rounded-full"></div>
               <p className="text-[10px] text-violet-300/50 font-bold tracking-widest uppercase">Trading Edge</p>
-              <p className={`text-xl font-black ${stats.edge >= 0 ? 'text-violet-400' : 'text-red-400'}`}>
-                {stats.edge >= 0 ? '+' : ''}${stats.edge.toFixed(2)}/trade
+              <p className={`text-xl font-black ${rightStats.edge >= 0 ? 'text-violet-400' : 'text-red-400'}`}>
+                {rightStats.edge >= 0 ? '+' : ''}${rightStats.edge.toFixed(2)}/trade
               </p>
             </div>
           </div>
@@ -344,7 +377,7 @@ export function TradingJournal() {
                 { subject: "Risk Mgmt", A: stats.mistakesData.some(m => m.name === "Overleveraged") ? 40 : 100 },
                 { subject: "Patience", A: stats.mistakesData.some(m => m.name === "Hesitation") ? 60 : 85 },
                 { subject: "Exécution", A: 90 },
-                { subject: "Analyse", A: stats.winRate },
+                { subject: "Analyse", A: rightStats.winRate },
               ]}>
                 <PolarGrid stroke="#27272a" />
                 <PolarAngleAxis dataKey="subject" tick={{ fill: '#71717a', fontSize: 10 }} />
@@ -617,7 +650,7 @@ export function TradingJournal() {
                   <div>
                     <label className="text-[10px] uppercase text-zinc-500 font-bold block mb-1.5">Playbook / Setup</label>
                     <select value={formData.playbook} onChange={e => setFormData({...formData, playbook: e.target.value})} className="w-full bg-black border border-white/10 rounded-lg px-4 py-2.5 text-sm font-bold text-white outline-none">
-                      {DEFAULT_PLAYBOOKS.map(p => <option key={p} value={p}>{p}</option>)}
+                      {playbooks.map(p => <option key={p} value={p}>{p}</option>)}
                     </select>
                   </div>
                   <div>
