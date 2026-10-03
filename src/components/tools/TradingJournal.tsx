@@ -84,7 +84,8 @@ export function TradingJournal() {
   const [isMounted, setIsMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<'DASHBOARD' | 'LOGBOOK' | 'PLAYBOOKS' | 'REPORTS'>('DASHBOARD');
   const { trades, setTrades, activeAccount, setActiveAccount, accounts, addAccount, removeAccount, playbooks, addPlaybook, removePlaybook } = useAppStore();
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false); const [dashLeftFilter, setDashLeftFilter] = useState("ALL"); const [dashRightFilter, setDashRightFilter] = useState("ALL"); useEffect(() => { setDashRightFilter(activeAccount === "ALL" ? "ALL" : "ACC_" + activeAccount); }, [activeAccount]); const handleNewPlaybook = () => { const name = window.prompt("Nom de la nouvelle m�thode (Playbook) :"); if (name && name.trim()) { addPlaybook(name.trim()); } }; const handleNewAccount = () => { const name = window.prompt(tRoot.tjNewAccPrompt); if (name && name.trim()) { addAccount(name.trim()); } };
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isAccMgrOpen, setIsAccMgrOpen] = useState(false); const [dashLeftFilter, setDashLeftFilter] = useState("ALL"); const [dashRightFilter, setDashRightFilter] = useState("ALL"); useEffect(() => { setDashRightFilter(activeAccount === "ALL" ? "ALL" : "ACC_" + activeAccount); }, [activeAccount]); const handleNewPlaybook = () => { const name = window.prompt("Nom de la nouvelle m�thode (Playbook) :"); if (name && name.trim()) { addPlaybook(name.trim()); } }; const handleNewAccount = () => { const name = window.prompt(tRoot.tjNewAccPrompt); if (name && name.trim()) { addAccount(name.trim()); } };
 
   // Formulaire d'ajout
   const [formData, setFormData] = useState<Partial<Trade>>({
@@ -478,9 +479,7 @@ export function TradingJournal() {
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex items-center justify-between mb-2">
         <h3 className="font-bold text-xl text-white">Playbooks Performance</h3>
-        <button className="text-sm font-bold text-violet-400 hover:text-violet-300 flex items-center gap-1">
-          <Plus className="w-4 h-4"/> New Playbook
-        </button>
+        <button onClick={handleNewPlaybook} className="text-sm font-bold text-violet-400 hover:text-violet-300 flex items-center gap-1"><Plus className="w-4 h-4"/> New Playbook</button>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {Object.entries(stats.playbooks).map(([name, p]) => (
@@ -586,19 +585,30 @@ export function TradingJournal() {
       </div>
 
       {/* ACCOUNT SWITCHER - Flottant pour un "low cognitive load" */}
+      
       {activeTab !== 'PLAYBOOKS' && activeTab !== 'REPORTS' && (
-        <div id="tour-account-switcher" className="flex items-center gap-2 mb-8 bg-[#111113] border border-white/5 p-1.5 rounded-xl w-fit">
-          {['ALL', 'FUNDED_1', 'CHALLENGE'].map(acc => (
-            <button 
-              key={acc}
-              onClick={() => setActiveAccount(acc)} 
-              className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${activeAccount === acc ? 'bg-zinc-800 text-white shadow-lg' : 'text-zinc-500 hover:text-white'}`}
-            >
-              {acc === 'ALL' ? 'All Accounts' : acc.replace('_', ' ')}
-            </button>
-          ))}
+        <div className="flex items-center gap-3 mb-8">
+          <div id="tour-account-switcher" className="flex items-center gap-2 bg-[#111113] border border-white/5 p-1.5 rounded-xl w-fit">
+            {['ALL', ...accounts].map(acc => (
+              <button 
+                key={acc}
+                onClick={() => setActiveAccount(acc)} 
+                className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${activeAccount === acc ? 'bg-zinc-800 text-white shadow-lg' : 'text-zinc-500 hover:text-white'}`}
+              >
+                {acc === 'ALL' ? 'All Accounts' : acc.replace(/_/g, ' ')}
+              </button>
+            ))}
+          </div>
+          <button 
+            onClick={() => setIsAccMgrOpen(true)} 
+            className="p-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-zinc-400 hover:text-white transition-colors flex items-center justify-center" 
+            title="Gérer les comptes"
+          >
+            <Edit2 className="w-4 h-4" />
+          </button>
         </div>
       )}
+
 
       {/* RENDER ACTIVE TAB */}
       <div className="min-h-[500px]">
