@@ -1,7 +1,19 @@
 "use client";
-import { Trophy, Swords, CalendarDays, DollarSign, ShieldAlert, Target } from "lucide-react";
+import { useState } from "react";
+import { Trophy, Swords, CalendarDays, DollarSign, ShieldAlert, Target, Search, Loader2 } from "lucide-react";
 
 export function Competitions({ type }: { type: 'TRADING' | 'CRYPTO' }) {
+  const [isSearching, setIsSearching] = useState(false);
+  const [showMore, setShowMore] = useState(false);
+
+  const handleSearch = () => {
+    setIsSearching(true);
+    setTimeout(() => {
+      setIsSearching(false);
+      setShowMore(true);
+    }, 1500);
+  };
+
   const comps = type === 'TRADING' ? [
     {
       name: "Robbins World Cup of Trading",
@@ -32,7 +44,19 @@ export function Competitions({ type }: { type: 'TRADING' | 'CRYPTO' }) {
       dd: "10% Max / 5% Daily",
       date: "Mensuelle",
       hybrid: true,
-    }
+    },
+    ...(showMore ? [
+      {
+        name: "Topstep Combine Challenge",
+        type: "Futures Prop",
+        assets: "Futures",
+        prize: "Funded Account",
+        fee: "$49/mois",
+        dd: "Trailing Max Drawdown",
+        date: "En cours",
+        hybrid: false,
+      }
+    ] : [])
   ] : [
     {
       name: "Bybit WSOT (World Series of Trading)",
@@ -63,16 +87,39 @@ export function Competitions({ type }: { type: 'TRADING' | 'CRYPTO' }) {
       dd: "10% Max / 5% Daily",
       date: "Mensuelle",
       hybrid: true,
-    }
+    },
+    ...(showMore ? [
+      {
+        name: "OKX Trading League",
+        type: "Exchange",
+        assets: "Crypto (Spot & Futures)",
+        prize: "$1,500,000 Pool",
+        fee: "Volume Based",
+        dd: "N/A",
+        date: "Octobre 2026",
+        hybrid: false,
+      }
+    ] : [])
   ];
 
   return (
     <div className="glass-panel p-6 rounded-2xl w-full border border-white/5 relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 to-amber-900"></div>
       
-      <div className="flex items-center gap-3 mb-8">
-        <Trophy className="w-5 h-5 text-amber-500" />
-        <h3 className="text-xl font-bold tracking-tight">Compétitions {type === 'TRADING' ? 'Trading Pro' : 'Crypto & Web3'}</h3>
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center gap-3">
+          <Trophy className="w-5 h-5 text-amber-500" />
+          <h3 className="text-xl font-bold tracking-tight">Compétitions {type === 'TRADING' ? 'Trading Pro' : 'Crypto & Web3'}</h3>
+        </div>
+        
+        <button 
+          onClick={handleSearch}
+          disabled={isSearching}
+          className="bg-white/5 hover:bg-white/10 text-white border border-white/10 px-4 py-2 rounded-lg text-xs font-bold transition-colors flex items-center gap-2"
+        >
+          {isSearching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+          {isSearching ? "Recherche en cours..." : "Rechercher des compétitions"}
+        </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
