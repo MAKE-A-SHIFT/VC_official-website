@@ -11,6 +11,8 @@ import { RecoveryCalculator } from "../tools/RecoveryCalculator";
 import { MarketSessions } from "../tools/MarketSessions";
 import { MarketHeatmap } from "../tools/MarketHeatmap";
 import { CryptoAIScanner } from "../tools/CryptoAIScanner";
+import { CompetitionsRadar } from "../tools/CompetitionsRadar";
+import { Trophy } from "lucide-react";
 import { Activity, ShieldAlert, Target, BookOpen, BrainCircuit, HelpCircle } from "lucide-react";
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
@@ -156,6 +158,16 @@ export function TerminalView() {
               </div>
             </section>
 
+            {/* SECTION: COMPETITIONS TRADING */}
+            <section className="animate-in fade-in duration-500 delay-200">
+              <h2 className="text-white/30 font-bold tracking-widest text-xs mb-6 uppercase flex items-center gap-2">
+                 <Trophy className="w-4 h-4"/> Global Trading Competitions
+              </h2>
+              <div className="mb-16">
+                <CompetitionsRadar category="TRADING" />
+              </div>
+            </section>
+
             {/* SECTION: LOGS (L'Enregistrement) */}
             <section className="animate-in fade-in duration-500 delay-150">
               <h2 className="text-white/30 font-bold tracking-widest text-xs mb-6 uppercase flex items-center gap-2">
@@ -163,6 +175,16 @@ export function TerminalView() {
               </h2>
               <div className="grid grid-cols-1 gap-6" id="tour-trading-journal">
                 <TradingJournal />
+              </div>
+            </section>
+
+            {/* SECTION: COMPETITIONS CRYPTO */}
+            <section className="animate-in fade-in duration-500 delay-100 mt-16">
+              <h2 className="text-white/30 font-bold tracking-widest text-xs mb-6 uppercase flex items-center gap-2">
+                 <Trophy className="w-4 h-4"/> Crypto Tournaments
+              </h2>
+              <div>
+                <CompetitionsRadar category="CRYPTO" />
               </div>
             </section>
           </>
