@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export type Language = 'fr' | 'it' | 'es' | 'de' | 'ru' | 'ja';
+export type Language = 'en' | 'fr' | 'it' | 'es' | 'de' | 'ru' | 'ja';
 
 // Definition of a Trade inside the store so everything can share it
 export interface Trade {

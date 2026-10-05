@@ -16,7 +16,7 @@ export function Navbar() {
     if (isFirstLoad.current) {
       isFirstLoad.current = false;
       const browserLang = navigator.language.split('-')[0].toLowerCase();
-      const supported: Language[] = ['fr', 'it', 'es', 'de', 'ru', 'ja'];
+      const supported: Language[] = ['en', 'fr', 'it', 'es', 'de', 'ru', 'ja'];
       if (supported.includes(browserLang as Language)) {
         setLanguage(browserLang as Language);
       }
@@ -41,6 +41,7 @@ export function Navbar() {
               onChange={(e) => setLanguage(e.target.value as Language)}
               className="bg-transparent text-white/70 text-sm font-bold tracking-wider outline-none cursor-pointer hover:text-white transition-colors border-none appearance-none pr-4 uppercase"
             >
+              <option value="en" className="bg-black text-white">EN</option>
               <option value="fr" className="bg-black text-white">FR</option>
               <option value="it" className="bg-black text-white">IT</option>
               <option value="es" className="bg-black text-white">ES</option>
