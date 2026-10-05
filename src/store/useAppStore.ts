@@ -34,6 +34,7 @@ interface AppState {
   accounts: string[];
   addAccount: (acc: string) => void;
   removeAccount: (acc: string) => void;
+  renameAccount: (oldName: string, newName: string) => void;
   playbooks: string[];
   addPlaybook: (pb: string) => void;
   removePlaybook: (pb: string) => void;
@@ -56,6 +57,10 @@ export const useAppStore = create<AppState>((set) => ({
   accounts: ["FUNDED_1", "CHALLENGE", "PERSONAL"],
   addAccount: (acc) => set((state) => ({ accounts: [...state.accounts, acc] })),
   removeAccount: (acc) => set((state) => ({ accounts: state.accounts.filter(a => a !== acc) })),
+  renameAccount: (oldName, newName) => set((state) => ({
+    accounts: state.accounts.map(a => a === oldName ? newName : a),
+    trades: state.trades.map(t => t.account === oldName ? { ...t, account: newName } : t)
+  })),
   
   playbooks: ["Silver Bullet", "London Breakout", "FVG Retracement", "Trend Continuation"],
   addPlaybook: (pb) => set((state) => ({ playbooks: [...state.playbooks, pb] })),
